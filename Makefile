@@ -1,0 +1,18 @@
+all: top.sv tangnano9k.cst
+	rm -rf ./build
+	mkdir ./build
+	make synth
+	make pnr
+	make bitstream
+
+synth:
+	yosys -p "read_verilog -D WAIT_TIME=13500000 -sv top.sv; synth_gowin -json ./build/synth.json"
+
+pnr: 
+	nextpnr-gowin --json ./build/synth.json --write ./build/pnr.json --device GW1NR-LV9QN88PC6/I5 --family GW1N-9C --cst tangnano9k.cst
+
+bitstream:
+	gowin_pack -d GW1N-9C -o ./build/bitstream.fs ./build/pnr.json
+
+clean:
+	rm -rf build/*

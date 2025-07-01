@@ -1,3 +1,7 @@
+# PI_USERNAME
+include .secrets
+export
+
 all: top.sv tangnano9k.cst
 	rm -rf ./build
 	mkdir ./build
@@ -13,6 +17,9 @@ pnr:
 
 bitstream:
 	gowin_pack -d GW1N-9C -o ./build/bitstream.fs ./build/pnr.json
+
+push-to-pi:
+	scp ./build/bitstream.fs ${PI_USERNAME}@${PI_IP_ADDRESS}:${PI_DIR}/bitstream.fs
 
 clean:
 	rm -rf build/*

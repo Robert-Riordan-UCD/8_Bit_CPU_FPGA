@@ -5,7 +5,7 @@
 module clock (
     input logic sys_clk,
     input logic mode, // 0 = cont, 1 = manual
-    input logic button,
+    input logic manual_toggle,
 
     output logic cpu_clk
 );
@@ -26,7 +26,7 @@ module clock (
         end
     end
 
-    always_ff @( posedge button ) begin
+    always_ff @( posedge manual_toggle ) begin
         man_clk <= ~man_clk;
     end
 

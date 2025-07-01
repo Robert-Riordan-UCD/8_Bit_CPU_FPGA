@@ -1,32 +1,25 @@
 module testbench ();
 
-    logic clk, key_i, rst_i;
+    logic clk, btn1_n, btn2_n;
     logic [5:0] led;
 
     initial begin
         clk = 0;
         forever
-            #5 clk = ~clk;
+            #1 clk = ~clk;
     end
 
     top dut(
         clk,
-        key_i, //mode
-        rst_i,  //btn
+        btn1_n,
+        btn2_n,
         led
     );
 
     initial begin
-        key_i = 0;
-        rst_i = 0;
-        #40
-        key_i = 1;
-        #40
-        rst_i = 1;
-        #40
-        key_i = 0;
-        rst_i = 0;
-        #500
+        btn1_n = 0;
+        btn2_n = 0;
+        #50
         $finish;
     end
 

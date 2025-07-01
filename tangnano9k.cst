@@ -1,3 +1,9 @@
+IO_LOC  "gpio_button" 57;
+IO_PORT "gpio_button" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
+IO_LOC  "gpio_slide_switch" 69;
+IO_PORT "gpio_slide_switch" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
 IO_LOC  "btn1_n" 3;
 IO_PORT "btn1_n" IO_TYPE=LVCMOS18 PULL_MODE=UP;
 

@@ -6,12 +6,14 @@
  */
 module top (
     // Onboard IO
-    input logic clk,
+    input logic clk, // Internal system clock
     input logic btn1_n,
     input logic btn2_n,
-    output logic [5:0] led
+    output logic [5:0] led,
 
     // GPIO
+    input logic gpio_slide_switch, // clock mode
+    input logic gpio_button // clock trigger FIXME: Needs debouncing
 );
     // Internal signals
     logic cpu_clk;
@@ -20,8 +22,8 @@ module top (
     assign reset = 0;
 
     logic clk_mode, clk_toggle;
-    assign clk_mode = 0;
-    assign clk_toggle = 0;
+    assign clk_mode = gpio_slide_switch;
+    assign clk_toggle = gpio_button;
 
     logic pc_inc, pc_out, pc_jump;
     logic [7:0] pc_bus;

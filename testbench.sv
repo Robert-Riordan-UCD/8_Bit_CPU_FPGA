@@ -1,6 +1,6 @@
 module testbench ();
 
-    logic clk, btn1_n, btn2_n;
+    logic clk, btn1_n, btn2_n, slide_switch;
     logic [5:0] led;
 
     initial begin
@@ -13,12 +13,14 @@ module testbench ();
         clk,
         btn1_n,
         btn2_n,
-        led
+        led,
+        slide_switch
     );
 
     initial begin
         btn1_n = 0;
         btn2_n = 0;
+        slide_switch = 0;
         #50
         $finish;
     end

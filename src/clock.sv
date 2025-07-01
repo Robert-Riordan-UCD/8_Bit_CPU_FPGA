@@ -26,9 +26,5 @@ module clock (
         end
     end
 
-    always_ff @( posedge manual_toggle ) begin
-        man_clk <= ~man_clk;
-    end
-
-    assign cpu_clk = mode ? man_clk : cont_clk;
+    assign cpu_clk = mode ? manual_toggle : cont_clk;
 endmodule

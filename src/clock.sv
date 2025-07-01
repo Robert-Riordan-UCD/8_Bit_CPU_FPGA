@@ -1,5 +1,5 @@
 `ifndef WAIT_TIME
-`define WAIT_TIME 1
+`define WAIT_TIME 0
 `endif
 
 module clock (

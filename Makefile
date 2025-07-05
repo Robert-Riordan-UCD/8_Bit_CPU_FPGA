@@ -29,4 +29,5 @@ waves:
 	cd verif/; make waves
 
 clean:
-	rm -rf build/*
+	rm -rf build/
+	cd verif; make clean

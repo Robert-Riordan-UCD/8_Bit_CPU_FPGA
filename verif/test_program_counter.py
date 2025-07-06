@@ -74,9 +74,27 @@ class PC_Seqence(uvm_sequence):
         await self.start_item(tx)
         await self.finish_item(tx)
 
-        # 1000 Random tests
-        tests = 1000
-        while (tests := tests-1):
+        # Reset
+        self.driver.dut.rst.value = 1
+        await RisingEdge(self.driver.dut.clk)
+        await RisingEdge(self.driver.dut.clk)
+        self.driver.dut.rst.value = 0
+
+
+        # 100 INCs
+        for i in range(100):
+            tx = PCSeqItem(inc=True, out=True)
+            await self.start_item(tx)
+            await self.finish_item(tx)
+
+        # 100 Random Jumps
+        for i in range(100):
+            tx = PCSeqItem(jump=True, bus_value=random.randint(0, 0xF))
+            await self.start_item(tx)
+            await self.finish_item(tx)
+
+        # 100 Random tests
+        for i in range(100):
             tx = PCSeqItem(
                 inc=random.randint(0, 1),
                 jump=random.randint(0, 1),
@@ -105,11 +123,7 @@ class PC_Scoreboard(uvm_component):
             # Count
             if self.dut.rst == 1:
                 self.expected_count = 0
-            elif self.dut.jump == 1:
-                self.expected_count = self.dut.bus.value
-            elif self.dut.inc == 1:
-                self.expected_count = (self.expected_count+1)
-
+            
             self.logger.info(f"Expected {self.expected_count}, Bus {self.dut.bus}")
             self.logger.info(f"RST {self.dut.rst}, INC {self.dut.inc}, JUMP {self.dut.jump}, OUT {self.dut.out}")
 
@@ -119,6 +133,12 @@ class PC_Scoreboard(uvm_component):
                     self.logger.info("PC out matches expected")
                 else:
                     self.logger.error(f"PC OUT: bus={self.dut.bus.value} - expected={self.expected_count}")
+            
+            if self.dut.jump == 1:
+                self.expected_count = self.dut.bus.value
+            elif self.dut.inc == 1:
+                self.expected_count = (self.expected_count+1) % 16
+
 
 """
     Test setup

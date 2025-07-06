@@ -1,8 +1,9 @@
+DUT ?= program_counter
 TOPLEVEL_LANG = verilog
-VERILOG_SOURCES = ../src/program_counter.sv ./tb_program_counter.sv
-TOPLEVEL = tb_program_counter
+VERILOG_SOURCES = ../src/$(DUT).sv ./$(DUT)/tb_$(DUT).sv
+TOPLEVEL = tb_$(DUT)
 # Python test module
-MODULE = test_program_counter
+MODULE = test_$(DUT)
 PYUVM = 1
 SIM = icarus
 WAVES = 1

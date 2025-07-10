@@ -1,6 +1,6 @@
-DUT ?= program_counter
+DUT ?= alu
 TOPLEVEL_LANG = verilog
-VERILOG_SOURCES = ../src/$(DUT).sv ./$(DUT)/tb_$(DUT).sv
+VERILOG_SOURCES = ../../src/$(DUT).sv ./tb_$(DUT).sv
 TOPLEVEL = tb_$(DUT)
 # Python test module
 MODULE = test_$(DUT)

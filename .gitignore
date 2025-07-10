@@ -1,6 +1,7 @@
 build/
 venv/
 verif/sim_build/
+verif/*/sim_build/
 __pycache__
 results.xml
 .secrets

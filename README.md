@@ -9,7 +9,7 @@
 | Memory Address Register |❌|❌|
 | Instruction Register    |❌|❌|
 | Random Access Memory    |❌|❌|
-| Arithmetic Logic Unit   |✅|〰️|
+| Arithmetic Logic Unit   |✅|✅|
 | Control                 |❌|❌|
 | Output                  |❌|❌|
 ||||

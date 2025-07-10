@@ -85,7 +85,6 @@ class Coverage(uvm_subscriber):
                 self.logger.error(f"Coverage MISS: Flags {"enabled" if en else "disabled"} never reached")
 
         # Check for reset active and inactive
-        self.logger.warning(f"{self.reset}")
         for rst in self.reset:
             if self.reset[rst]:
                 self.logger.info(f"Reset {"active" if rst else "inactive"} {self.reset[rst]} times")

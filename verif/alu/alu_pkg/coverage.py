@@ -9,7 +9,6 @@
 """
 
 from pyuvm import uvm_subscriber, uvm_analysis_export, uvm_error
-from enum import Enum
 
 class Coverage(uvm_subscriber):
     def __init__(self, parent, name="coverage"):

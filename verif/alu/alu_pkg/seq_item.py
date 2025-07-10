@@ -4,6 +4,7 @@ class SeqItem(uvm_sequence_item):
     def __init__(self, name="seq_item"):
         super().__init__(name)
         #  Input
+        self.rst = 0
         self.a = 0
         self.b = 0
         self.out = 0

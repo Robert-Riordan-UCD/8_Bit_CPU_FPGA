@@ -3,13 +3,13 @@ module tb_alu;
     logic clk=0;
     always #1 clk = ~clk;
 
-    logic rst=0;
-    logic out=0;
-    logic subtract=0;
-    logic flags_in=0;
+    logic rst;
+    logic out;
+    logic subtract;
+    logic flags_in;
 
-    logic [7:0] a=0;
-    logic [7:0] b=0;
+    logic [7:0] a;
+    logic [7:0] b;
 
     logic [7:0] bus;
     logic carry;

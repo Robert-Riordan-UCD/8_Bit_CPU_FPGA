@@ -18,13 +18,14 @@ class Driver(uvm_driver):
             op = await self.seq_item_port.get_next_item()
             self.logger.info("Run DRV: OP recieved")
 
+            self.dut.rst.value = op.rst
             self.dut.a.value = op.a
             self.dut.b.value = op.b
             self.dut.out.value = op.out
             self.dut.subtract.value = op.subtract
             self.dut.flags_in.value = op.flags_in
 
-            await cocotb.triggers.RisingEdge(self.dut.clk)
+            await cocotb.triggers.FallingEdge(self.dut.clk)
 
             self.logger.info("Run DRV: OP complete")
             self.seq_item_port.item_done()

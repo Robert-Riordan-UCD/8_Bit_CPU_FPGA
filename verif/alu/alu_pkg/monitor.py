@@ -20,6 +20,7 @@ class Monitor(uvm_monitor):
             await cocotb.triggers.RisingEdge(self.dut.clk)
 
             op = SeqItem()
+            op.rst = self.dut.rst
             op.a = self.dut.a
             op.b = self.dut.b
             op.out = self.dut.out

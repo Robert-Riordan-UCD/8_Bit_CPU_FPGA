@@ -14,8 +14,9 @@ class Test(uvm_test):
         self.logger.info("Run TEST")
         self.raise_objection()
 
-        ops = [SeqItem() for _ in range(10)]
+        ops = [SeqItem() for _ in range(1000)]
         for op in ops:
+            op.rst = 1 if randint(0, 10) == 0 else 0 # Reset 1 in every 10 cycles randomly
             op.a = randint(0, 0xFF)
             op.b = randint(0, 0xFF)
             op.subtract = randint(0, 1)

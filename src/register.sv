@@ -12,7 +12,7 @@ module register (
     always_ff @( posedge clk or posedge rst ) begin
         if (rst) begin
             value <= 0;
-        end else if (read_from_bus) begin
+        end else if (read_from_bus && !write_to_bus) begin
             value <= bus;
         end else begin
             value <= value;

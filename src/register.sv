@@ -1,4 +1,6 @@
-module register (
+module register #(
+    parameter BUS_OUTPUT_MASK = 8'hFF
+)(
     input clk,
     input rst,
 
@@ -19,6 +21,6 @@ module register (
         end
     end
 
-    assign bus = (write_to_bus && !read_from_bus) ? value : 'bz;
+    assign bus = (write_to_bus && !read_from_bus) ? BUS_OUTPUT_MASK & value : 'bz;
 
 endmodule

@@ -1,6 +1,6 @@
 import cocotb, pyuvm
 
-from register_pkg.test import Test
+from mar_pkg.test import Test
 
 @cocotb.test
 async def run_test(dut):

@@ -3,6 +3,7 @@
 `include "src/memory_address_register.sv"
 `include "src/register.sv"
 `include "src/alu.sv"
+`include "src/random_access_memory.sv"
 
 /* This module connects each of the major CPU components together
  * and provides an inteface to the FPGA IO
@@ -39,6 +40,7 @@ module top (
 
     logic [7:0] a_reg_value;
     logic [7:0] b_reg_value;
+    logic [3:0] memory_address;
 
     // Core modules
     clock u_clock (
@@ -65,7 +67,7 @@ module top (
         .manual_read(),
         .manual_switches(),
         .bus(),
-        .address()
+        .address(memory_address)
     );
 
     register u_a_reg (
@@ -77,7 +79,16 @@ module top (
         .value(a_reg_value)
     );
 
-    // ram u_ram();
+    random_access_memory u_ram(
+        .clk(cpu_clk),
+        .read_from_bus(),
+        .write_to_bus(),
+        .manual_mode(),
+        .manual_read(),
+        .address(memory_address),
+        .program_switches(),
+        .bus()
+    );
 
     alu u_alu (
         .clk(cpu_clk),

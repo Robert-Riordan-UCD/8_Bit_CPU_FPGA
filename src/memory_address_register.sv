@@ -13,16 +13,12 @@ module memory_address_register (
     output logic [3:0] address
 );
 
-    always_ff @( posedge clk or posedge rst or posedge manual_read) begin
+    always_ff @( posedge clk or posedge rst) begin
         if (rst) begin
             address <= 0;
-        end else if manual_read begin
-            if manual_mode begin
-                address <= manual_switches;
-            end else begin
-                address <= address;
-            end
-        end else if (read_from_bus && !manual_mode) begin
+        end else if (manual_mode && manual_read) begin
+            address <= manual_switches;
+        end else if (!manual_mode && read_from_bus) begin
             address <= bus;
         end else begin
             address <= address;

@@ -11,5 +11,5 @@ class SeqItem(uvm_sequence_item):
         self.subtract = subtract
         self.flags_in = flags_in
 
-    def __str__(self):
-        return f"A: 0x{self.a:02x}, B: {self.b:02x}, OUT: {self.out}, SUBTRACT: {self.subtract}, FLAGS: {self.flags_in}"
+    # def __str__(self):
+    #     return f"A: 0x{self.a:02x}, B: {self.b:02x}, OUT: {self.out}, SUBTRACT: {self.subtract}, FLAGS: {self.flags_in}"

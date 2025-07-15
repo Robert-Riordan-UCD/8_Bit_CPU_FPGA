@@ -17,5 +17,5 @@ class Env(uvm_env):
     def connect_phase(self):
         self.logger.info("Connect ENV")
         self.driver.seq_item_port.connect(self.sequencer.seq_item_export)
-        # self.monitor.analysis_port.connect(self.scoreboard.analysis_export)
+        self.monitor.analysis_port.connect(self.scoreboard.analysis_export)
         self.monitor.analysis_port.connect(self.coverage.analysis_export)

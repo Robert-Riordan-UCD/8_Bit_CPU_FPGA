@@ -4,6 +4,7 @@
 `include "src/register.sv"
 `include "src/alu.sv"
 `include "src/random_access_memory.sv"
+`include "src/control.sv"
 
 /* This module connects each of the major CPU components together
  * and provides an inteface to the FPGA IO
@@ -29,24 +30,41 @@ module top (
     assign clk_mode = gpio_slide_switch;
     assign clk_toggle = gpio_button;
 
-    logic pc_inc, pc_out, pc_jump;
-    logic [7:0] pc_bus;
-    assign pc_inc = ~btn1_n;
-    assign pc_out = ~btn2_n;
-    assign pc_jump = 0;
-
-    logic [7:0] bus;
-    assign bus = pc_out ? pc_bus : 8'b0;
+    tri [7:0] bus;
 
     logic [7:0] a_reg_value;
     logic [7:0] b_reg_value;
     logic [3:0] memory_address;
+    logic [7:0] instruction;
+
+    logic alu_carry;
+    logic alu_zero;
+
+    // Control signals
+    logic clk_halt;
+    logic pc_inc;
+    logic pc_jump;
+    logic pc_out;
+    logic a_reg_read_from_bus;
+    logic a_reg_write_to_bus;
+    logic b_reg_read_from_bus;
+    logic b_reg_write_to_bus;
+    logic i_reg_read_from_bus;
+    logic i_reg_write_to_bus;
+    logic mar_read_from_bus;
+    logic ram_read_from_bus;
+    logic ram_write_to_bus;
+    logic alu_out;
+    logic alu_subtract;
+    logic alu_flags_in;
+    logic out_en;
 
     // Core modules
     clock u_clock (
         .sys_clk(clk),
         .mode(clk_mode),
         .manual_toggle(clk_toggle),
+        // .halt(clk_halt),
         .cpu_clk(cpu_clk)
     );
 
@@ -56,13 +74,13 @@ module top (
         .inc(pc_inc),
         .jump(pc_jump),
         .out(pc_out),
-        .bus(pc_bus)
+        .bus()
     );
 
     memory_address_register u_mar (
         .clk(cpu_clk),
         .rst(reset),
-        .read_from_bus(),
+        .read_from_bus(mar_read_from_bus),
         .manual_mode(),
         .manual_read(),
         .manual_switches(),
@@ -73,16 +91,16 @@ module top (
     register u_a_reg (
         .clk(cpu_clk),
         .rst(reset),
-        .read_from_bus(),
-        .write_to_bus(),
+        .read_from_bus(a_reg_read_from_bus),
+        .write_to_bus(a_reg_write_to_bus),
         .bus(),
         .value(a_reg_value)
     );
 
     random_access_memory u_ram(
         .clk(cpu_clk),
-        .read_from_bus(),
-        .write_to_bus(),
+        .read_from_bus(ram_read_from_bus),
+        .write_to_bus(ram_write_to_bus),
         .manual_mode(),
         .manual_read(),
         .address(memory_address),
@@ -95,33 +113,57 @@ module top (
         .rst(reset),
         .a(a_reg_value),
         .b(b_reg_value),
-        .out(),
-        .subtract(),
-        .flags_in(),
+        .out(alu_out),
+        .subtract(alu_subtract),
+        .flags_in(alu_flags_in),
         .bus(),
-        .carry(),
-        .zero()
+        .carry(alu_carry),
+        .zero(alu_zero)
     );
 
     register #(8'h0F) u_i_reg (
         .clk(cpu_clk),
         .rst(reset),
-        .read_from_bus(),
-        .write_to_bus(),
+        .read_from_bus(i_reg_read_from_bus),
+        .write_to_bus(i_reg_write_to_bus),
         .bus(),
-        .value()
+        .value(instruction)
     );
     
     register u_b_reg (
         .clk(cpu_clk),
         .rst(reset),
-        .read_from_bus(),
-        .write_to_bus(),
+        .read_from_bus(b_reg_read_from_bus),
+        .write_to_bus(b_reg_write_to_bus),
         .bus(),
         .value(b_reg_value)
     );
     
-    // control u_control();
+    control u_control(
+        .clk(cpu_clk),
+        .rst(reset),
+        .instruction(instruction[7:4]),
+        .alu_carry(alu_carry),
+        .alu_zero(alu_zero),
+        .clk_halt(clk_halt),
+        .pc_inc(pc_inc),
+        .pc_jump(pc_jump),
+        .pc_out(pc_out),
+        .a_reg_read_from_bus(a_reg_read_from_bus),
+        .a_reg_write_to_bus(a_reg_write_to_bus),
+        .b_reg_read_from_bus(b_reg_read_from_bus),
+        .b_reg_write_to_bus(b_reg_write_to_bus),
+        .i_reg_read_from_bus(i_reg_read_from_bus),
+        .i_reg_write_to_bus(i_reg_write_to_bus),
+        .mar_read_from_bus(mar_read_from_bus),
+        .ram_read_from_bus(ram_read_from_bus),
+        .ram_write_to_bus(ram_write_to_bus),
+        .alu_out(alu_out),
+        .alu_subtract(alu_subtract),
+        .alu_flags_in(alu_flags_in),
+        .out_en(out_en)
+    );
+
     // output_module u_output();
 
     // FPGA IO connections

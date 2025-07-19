@@ -2,7 +2,7 @@ module control (
     input clk,
     input rst,
 
-    input [3:0] instruction;
+    input [3:0] instruction,
 
     input alu_carry,
     input alu_zero,
@@ -31,7 +31,7 @@ module control (
     output alu_subtract,
     output alu_flags_in,
 
-    output out_en,
+    output out_en
 );
 
     localparam STEP_MAX = 6;
@@ -45,4 +45,13 @@ module control (
         end
     end
 
+    // Fetch Cycle
+    // PC out, MAR in
+    // RAM out, I in, PC inc
+    assign pc_out = step_counter == 0;
+    assign mar_read_from_bus = step_counter == 0;
+
+    assign ram_write_to_bus = step_counter == 1;
+    assign i_reg_read_from_bus = step_counter == 1;
+    assign pc_inc = step_counter == 1;
 endmodule

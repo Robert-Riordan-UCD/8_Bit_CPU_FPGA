@@ -64,7 +64,7 @@ module top (
         .sys_clk(clk),
         .mode(clk_mode),
         .manual_toggle(clk_toggle),
-        // .halt(clk_halt),
+        .halt(clk_halt),
         .cpu_clk(cpu_clk)
     );
 

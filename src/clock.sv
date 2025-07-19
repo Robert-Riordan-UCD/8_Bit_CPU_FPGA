@@ -6,6 +6,7 @@ module clock (
     input logic sys_clk,
     input logic mode, // 0 = cont, 1 = manual
     input logic manual_toggle,
+    input logic halt,
 
     output logic cpu_clk
 );
@@ -26,5 +27,5 @@ module clock (
         end
     end
 
-    assign cpu_clk = mode ? manual_toggle : cont_clk;
+    assign cpu_clk = (mode ? manual_toggle : cont_clk) & ~halt;
 endmodule

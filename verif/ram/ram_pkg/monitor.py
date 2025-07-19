@@ -1,0 +1,34 @@
+from pyuvm import uvm_monitor, uvm_analysis_port
+import cocotb
+from .seq_item import SeqItem
+
+class Monitor(uvm_monitor):
+    def __init__(self, parent, name="monitor"):
+        super().__init__(name, parent)
+        self.logger.info("Init MON")
+        self.dut = None
+        self.analysis_port = uvm_analysis_port("ap", self)
+
+    def build_phase(self):
+        self.logger.info("Build MON")
+        self.dut = cocotb.top
+    
+    async def run_phase(self):
+        self.logger.info("Run MON")
+        while True:
+            # self.logger.info("Run MON: Wait for CLK")
+            await cocotb.triggers.RisingEdge(self.dut.clk)
+
+            op = SeqItem()
+            op.read_from_bus = self.dut.read_from_bus
+            op.write_to_bus = self.dut.write_to_bus
+            op.manual_mode = self.dut.manual_mode
+            op.manual_read = self.dut.manual_read
+            op.address = self.dut.address
+            op.program_switches = self.dut.program_switches
+            op.bus_driver = self.dut.bus_driver
+            
+            op.bus = self.dut.bus
+
+            self.analysis_port.write(op)
+            # self.logger.info("Run MON: Cycle monitored")

@@ -14,7 +14,7 @@ module random_access_memory (
     inout [7:0] bus
 );
 
-    logic [3:0] data [7:0];
+    logic [7:0] data [16];
 
     always_ff @(posedge clk) begin
         if (manual_mode) begin

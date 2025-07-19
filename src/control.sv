@@ -105,7 +105,7 @@ module control (
     function fetch(input [2:0] step);
         case (step)
             0: control_signals = `PC_OUT | `MAR_READ;
-            1: control_signals = `RAM_WRITE | `I_READ | `PC_OUT;
+            1: control_signals = `RAM_WRITE | `I_READ | `PC_INC;
             default: control_signals = 0;
         endcase
     endfunction

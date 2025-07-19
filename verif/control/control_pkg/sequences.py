@@ -5,47 +5,59 @@ from .seq_item import SeqItem
 
 class TestAllSeq(uvm_sequence):
     async def body(self):
-        load_a = LoadA("load A")
-        add = Add("add")
-        random = Random("random")
+        all_ins = AllInstructions("all instructions")
+        # add = Add("add")
+        # random = Random("random")
 
-        await load_a.start(self.sequencer)
-        await add.start(self.sequencer)
-        await random.start(self.sequencer)
+        await all_ins.start(self.sequencer)
+        # await add.start(self.sequencer)
+        # await random.start(self.sequencer)
 
-class LoadA(uvm_sequence):
+# class LoadA(uvm_sequence):
+#     async def body(self):
+#         seqs = [
+#             SeqItem(name="load A rst", rst=1),
+#             SeqItem(name="load A step 0", instruction=0b0001),
+#             SeqItem(name="load A step 1", instruction=0b0001),
+#             SeqItem(name="load A step 2", instruction=0b0001),
+#             SeqItem(name="load A step 3", instruction=0b0001),
+#             SeqItem(name="load A step 4", instruction=0b0001),
+#             SeqItem(name="load A step 5", instruction=0b0001),
+#             SeqItem(name="load A step 6", instruction=0b0001),
+#         ]
+
+#         for seq in seqs:
+#             await self.start_item(seq)
+#             await self.finish_item(seq)
+
+# class Add(uvm_sequence):
+#     async def body(self):
+#         seqs = [
+#             SeqItem(name="add rst", rst=1),
+#             SeqItem(name="add step 0", instruction=0b0010),
+#             SeqItem(name="add step 1", instruction=0b0010),
+#             SeqItem(name="add step 2", instruction=0b0010),
+#             SeqItem(name="add step 3", instruction=0b0010),
+#             SeqItem(name="add step 4", instruction=0b0010),
+#             SeqItem(name="add step 5", instruction=0b0010),
+#             SeqItem(name="add step 6", instruction=0b0010),
+#         ]
+
+#         for seq in seqs:
+#             await self.start_item(seq)
+#             await self.finish_item(seq)
+
+class AllInstructions(uvm_sequence):
     async def body(self):
-        seqs = [
-            SeqItem(name="load A rst", rst=1),
-            SeqItem(name="load A step 0", instruction=0b0001),
-            SeqItem(name="load A step 1", instruction=0b0001),
-            SeqItem(name="load A step 2", instruction=0b0001),
-            SeqItem(name="load A step 3", instruction=0b0001),
-            SeqItem(name="load A step 4", instruction=0b0001),
-            SeqItem(name="load A step 5", instruction=0b0001),
-            SeqItem(name="load A step 6", instruction=0b0001),
-        ]
-
-        for seq in seqs:
-            await self.start_item(seq)
-            await self.finish_item(seq)
-
-class Add(uvm_sequence):
-    async def body(self):
-        seqs = [
-            SeqItem(name="add rst", rst=1),
-            SeqItem(name="add step 0", instruction=0b0010),
-            SeqItem(name="add step 1", instruction=0b0010),
-            SeqItem(name="add step 2", instruction=0b0010),
-            SeqItem(name="add step 3", instruction=0b0010),
-            SeqItem(name="add step 4", instruction=0b0010),
-            SeqItem(name="add step 5", instruction=0b0010),
-            SeqItem(name="add step 6", instruction=0b0010),
-        ]
-
-        for seq in seqs:
-            await self.start_item(seq)
-            await self.finish_item(seq)
+        # seqs = [SeqItem(instruction=i) for i in range(0xF)]
+        for instruction in range(0x10):
+            rst = SeqItem(name="rst", rst=1)
+            await self.start_item(rst)
+            await self.finish_item(rst)
+            for step in range(7):
+                seq = SeqItem(name=f"step {step}", instruction=instruction)
+                await self.start_item(seq)
+                await self.finish_item(seq)
 
 class Random(uvm_sequence):
     async def body(self):

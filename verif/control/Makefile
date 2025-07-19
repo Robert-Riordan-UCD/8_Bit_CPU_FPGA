@@ -12,4 +12,4 @@ WAVES = 1
 include $(shell cocotb-config --makefiles)/Makefile.sim
 
 waves:
-	gtkwave sim_build/tb_$(DUT).fst
+	gtkwave sim_build/tb_$(DUT).fst &

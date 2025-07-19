@@ -10,7 +10,7 @@
 | Instruction Register    |✅|✅|
 | Random Access Memory    |✅|✅|
 | Arithmetic Logic Unit   |✅|✅|
-| Control                 |❌|❌|
+| Control                 |✅|❌|
 | Output                  |❌|❌|
 ||||
 | Top                     |〰️|❌|

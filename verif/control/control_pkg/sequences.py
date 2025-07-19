@@ -5,50 +5,42 @@ from .seq_item import SeqItem
 
 class TestAllSeq(uvm_sequence):
     async def body(self):
-        # ops = AllOperations("all operations")
-        # edge = EdgeCases("edge cases")
+        load_a = LoadA("load A")
+        add = Add("add")
         random = Random("random")
 
-        # await ops.start(self.sequencer)
-        # await edge.start(self.sequencer)
+        await load_a.start(self.sequencer)
+        await add.start(self.sequencer)
         await random.start(self.sequencer)
 
-"""
-    All combinations of rst, read, write
-"""
-class AllOperations(uvm_sequence):
+class LoadA(uvm_sequence):
     async def body(self):
         seqs = [
-            # Valid operations
-            SeqItem(name="rst", rst=1),
-            SeqItem(name="inc", inc=1),
-            SeqItem(name="out", out=1),
-            SeqItem(name="jump", bus_driver=0xAB, jump=1),
-            SeqItem(name="out", out=1),
-            SeqItem(name="out and inc", out=1, inc=1),
-            SeqItem(name="noop"),
-            
-            # Invalid operations
-            SeqItem(name="inc and jump", inc=1, jump=1, bus_driver=0x12),
-            SeqItem(name="jump and out", out=1, jump=1, bus_driver=0x34),
-            SeqItem(name="inc jump out", inc=1, out=1, jump=1, bus_driver=0x56),
+            SeqItem(name="load A rst", rst=1),
+            SeqItem(name="load A step 0", instruction=0b0001),
+            SeqItem(name="load A step 1", instruction=0b0001),
+            SeqItem(name="load A step 2", instruction=0b0001),
+            SeqItem(name="load A step 3", instruction=0b0001),
+            SeqItem(name="load A step 4", instruction=0b0001),
+            SeqItem(name="load A step 5", instruction=0b0001),
+            SeqItem(name="load A step 6", instruction=0b0001),
         ]
 
         for seq in seqs:
             await self.start_item(seq)
             await self.finish_item(seq)
 
-
-"""
-    Cases with 0 or 0xFF
-"""
-class EdgeCases(uvm_sequence):
+class Add(uvm_sequence):
     async def body(self):
         seqs = [
-            # INC overflow
-            SeqItem(name="jump to 0x0F", bus_driver=0x0F, jump=1),
-            SeqItem(name="inc to 0", inc=1),
-            SeqItem(name="out", out=1), 
+            SeqItem(name="add rst", rst=1),
+            SeqItem(name="add step 0", instruction=0b0010),
+            SeqItem(name="add step 1", instruction=0b0010),
+            SeqItem(name="add step 2", instruction=0b0010),
+            SeqItem(name="add step 3", instruction=0b0010),
+            SeqItem(name="add step 4", instruction=0b0010),
+            SeqItem(name="add step 5", instruction=0b0010),
+            SeqItem(name="add step 6", instruction=0b0010),
         ]
 
         for seq in seqs:

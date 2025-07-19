@@ -4,7 +4,7 @@ class SeqItem(uvm_sequence_item):
     def __init__(self, name="seq_item", rst=0, instruction=0, alu_carry=0, alu_zero=0):
         super().__init__(name)
         self.rst = rst
-        self.instructions = instruction
+        self.instruction = instruction
         self.alu_carry = alu_carry
         self.alu_zero = alu_zero
 

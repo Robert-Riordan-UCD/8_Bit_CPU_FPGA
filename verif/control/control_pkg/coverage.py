@@ -20,6 +20,11 @@ class Coverage(uvm_subscriber):
         self.ins_count = 0
         self.instructions = {}
 
+        self.jump_carry = False
+        self.jump_zero = False
+        self.no_jump_carry = False
+        self.no_jump_zero = False
+
         self.clk_halt = set()
         self.pc_inc = set()
         self.pc_jump = set()
@@ -50,6 +55,12 @@ class Coverage(uvm_subscriber):
         if self.counter == 3:
             self.current_ins = op.instruction.value
             self.ins_count = 1
+            if self.current_ins == 0b0111: # Jump carry
+                if op.alu_carry == 1: self.jump_carry = True
+                else:                 self.no_jump_carry = True
+            elif self.current_ins == 0b1000: # Jump zero
+                if op.alu_zero == 1: self.jump_zero = True
+                else:                self.no_jump_zero = True
         elif self.current_ins == op.instruction.value:
             self.ins_count += 1
 
@@ -84,6 +95,11 @@ class Coverage(uvm_subscriber):
                 self.logger.info(f"Coverage: Instruction {i} covered {self.instructions[i]} times")
             else:
                 self.logger.error(f"Coverage MISS: Instruction {i} missed")
+
+        assert self.jump_carry, "JUMP CARRY never called with ALU CARRY set"
+        assert self.no_jump_carry, "JUMP CARRY never called without ALU CARRY set"
+        assert self.jump_zero, "JUMP ZERO never called with ALU ZERO set"
+        assert self.no_jump_zero, "JUMP ZERO never called without ALU ZERO set"
 
         assert 0 in self.clk_halt, "HALT never 0"
         assert 1 in self.clk_halt, "HALT never 1"

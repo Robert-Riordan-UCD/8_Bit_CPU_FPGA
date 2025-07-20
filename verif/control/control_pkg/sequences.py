@@ -270,7 +270,7 @@ class Noop(uvm_sequence):
 
 class RandomInstructions(uvm_sequence):
     async def body(self):
-        for _ in range(100):
+        for _ in range(2000):
             r = randint(0, 0xF)
             match r:
                 case 0b0001: seq = LoadA("load a")

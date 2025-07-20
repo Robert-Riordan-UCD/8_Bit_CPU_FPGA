@@ -6,6 +6,7 @@ class Driver(uvm_driver):
         super().__init__(name, parent)
         self.logger.info("Init DRV")
         self.dut = None
+        self.monitor = None
     
     def build_phase(self):
         self.logger.info("Build DRV")
@@ -22,6 +23,8 @@ class Driver(uvm_driver):
             self.dut.instruction.value = op.instruction
             self.dut.alu_carry.value = op.alu_carry
             self.dut.alu_zero.value = op.alu_zero
+
+            self.monitor.expected_output = op.expected_output
 
             await cocotb.triggers.FallingEdge(self.dut.clk)
 

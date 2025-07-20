@@ -2,33 +2,36 @@ from pyuvm import uvm_sequence
 from random import randint
 
 from .seq_item import SeqItem
+from .control_signals import Signal
 
 class TestAllSeq(uvm_sequence):
     async def body(self):
-        all_ins = AllInstructions("all instructions")
+        # all_ins = AllInstructions("all instructions")
+        load_a = LoadA("load A")
         # add = Add("add")
         # random = Random("random")
 
-        await all_ins.start(self.sequencer)
+        # await all_ins.start(self.sequencer)
+        await load_a.start(self.sequencer)
         # await add.start(self.sequencer)
         # await random.start(self.sequencer)
 
-# class LoadA(uvm_sequence):
-#     async def body(self):
-#         seqs = [
-#             SeqItem(name="load A rst", rst=1),
-#             SeqItem(name="load A step 0", instruction=0b0001),
-#             SeqItem(name="load A step 1", instruction=0b0001),
-#             SeqItem(name="load A step 2", instruction=0b0001),
-#             SeqItem(name="load A step 3", instruction=0b0001),
-#             SeqItem(name="load A step 4", instruction=0b0001),
-#             SeqItem(name="load A step 5", instruction=0b0001),
-#             SeqItem(name="load A step 6", instruction=0b0001),
-#         ]
+class LoadA(uvm_sequence):
+    async def body(self):
+        seqs = [
+            SeqItem(name="load A rst", rst=1),
+            SeqItem(name="load A step 0", instruction=0b0001, expected_output=[Signal.PC_OUT, Signal.MAR_RD]),
+            SeqItem(name="load A step 1", instruction=0b0001, expected_output=[Signal.RAM_WRT, Signal.I_RD, Signal.PC_INC]),
+            SeqItem(name="load A step 2", instruction=0b0001, expected_output=[Signal.I_WRT, Signal.MAR_RD]),
+            SeqItem(name="load A step 3", instruction=0b0001, expected_output=[Signal.RAM_WRT, Signal.A_RD]),
+            SeqItem(name="load A step 4", instruction=0b0001),
+            SeqItem(name="load A step 5", instruction=0b0001),
+            SeqItem(name="load A step 6", instruction=0b0001),  
+        ]
 
-#         for seq in seqs:
-#             await self.start_item(seq)
-#             await self.finish_item(seq)
+        for seq in seqs:
+            await self.start_item(seq)
+            await self.finish_item(seq)
 
 # class Add(uvm_sequence):
 #     async def body(self):

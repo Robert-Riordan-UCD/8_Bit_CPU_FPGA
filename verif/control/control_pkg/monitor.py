@@ -8,6 +8,7 @@ class Monitor(uvm_monitor):
         self.logger.info("Init MON")
         self.dut = None
         self.analysis_port = uvm_analysis_port("ap", self)
+        self.expected_output = None
 
     def build_phase(self):
         self.logger.info("Build MON")
@@ -43,5 +44,7 @@ class Monitor(uvm_monitor):
             op.alu_flags_in = self.dut.alu_flags_in
             op.out_en = self.dut.out_en
             
+            op.expected_output = self.expected_output
+
             self.analysis_port.write(op)
             # self.logger.info("Run MON: Cycle monitored")

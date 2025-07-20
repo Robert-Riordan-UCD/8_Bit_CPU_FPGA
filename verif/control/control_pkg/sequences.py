@@ -20,7 +20,7 @@ class TestAllSeq(uvm_sequence):
         jump_zero_set = JumpZeroWithZero("jump zero set")
         out = Out("out")
         halt = Halt("halt")
-        # random = Random("random")
+        random_instructions = RandomInstructions("random instructions")
 
         await reset.start(self.sequencer)
         await load_a.start(self.sequencer)
@@ -35,7 +35,7 @@ class TestAllSeq(uvm_sequence):
         await jump_zero_set.start(self.sequencer)
         await out.start(self.sequencer)
         await halt.start(self.sequencer)
-        # await random.start(self.sequencer)
+        await random_instructions.start(self.sequencer)
 
 class Reset(uvm_sequence):
     async def body(self):
@@ -247,28 +247,42 @@ class Halt(uvm_sequence):
             await self.start_item(seq)
             await self.finish_item(seq)
 
+class Noop(uvm_sequence):
+    def __init__(self, name="noop", ins=0b0000):
+        super().__init__(name)
+        self.ins = ins
 
-class AllInstructions(uvm_sequence):
     async def body(self):
-        # seqs = [SeqItem(instruction=i) for i in range(0xF)]
-        for instruction in range(0x10):
-            rst = SeqItem(name="rst", rst=1)
-            await self.start_item(rst)
-            await self.finish_item(rst)
-            for step in range(7):
-                seq = SeqItem(name=f"step {step}", instruction=instruction)
-                await self.start_item(seq)
-                await self.finish_item(seq)
+        prev_ins = randint(0, 0xF)
+        seqs = [
+            SeqItem(name="halt step 0", instruction=prev_ins, expected_output=[Signal.PC_OUT, Signal.MAR_RD]),
+            SeqItem(name="halt step 1", instruction=prev_ins, expected_output=[Signal.RAM_WRT, Signal.I_RD, Signal.PC_INC]),
+            SeqItem(name="halt step 2", instruction=self.ins),
+            SeqItem(name="halt step 3", instruction=self.ins),
+            SeqItem(name="halt step 4", instruction=self.ins),
+            SeqItem(name="halt step 5", instruction=self.ins),
+            SeqItem(name="halt step 6", instruction=self.ins),
+        ]
 
-class Random(uvm_sequence):
+        for seq in seqs:
+            await self.start_item(seq)
+            await self.finish_item(seq)
+
+class RandomInstructions(uvm_sequence):
     async def body(self):
-        ops = [SeqItem() for _ in range(200)]
-        for op in ops:
-            op.rst = 1 if randint(0, 10) == 0 else 0 # Reset 1 in every 10 cycles randomly
-            op.instruction = randint(0, 0xF)
-            op.alu_carry = randint(0, 1)
-            op.alu_zero = randint(0, 1)
-
-        for op in ops:
-            await self.start_item(op)
-            await self.finish_item(op)
+        for _ in range(100):
+            r = randint(0, 0xF)
+            match r:
+                case 0b0001: seq = LoadA("load a")
+                case 0b0010: seq = Add("add")
+                case 0b0011: seq = Sub("sub")
+                case 0b0100: seq = StoreA("store a")
+                case 0b0101: seq = LoadIm("load imediate")
+                case 0b0110: seq = Jump("jump")
+                case 0b0111: seq = JumpCarryWithCarry("jump with carry (carry set)") if randint(0, 1) else JumpCarryWithoutCarry("jump with carry (carry not set)")
+                case 0b1000: seq = JumpZeroWithZero("jump with zero (zero set)") if randint(0, 1) else JumpZeroWithoutZero("jump with zero (zero not set)")
+                case 0b1110: seq = Out("out")
+                case 0b1111: seq = Halt("halt")
+                case _: seq = Noop("noop", r)
+            
+            await seq.start(self.sequencer)

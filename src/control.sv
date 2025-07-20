@@ -145,7 +145,7 @@ module control (
             1: fetch(step);
             2: control_signals = `I_WRITE | `MAR_READ;
             3: control_signals = `RAM_WRITE | `B_READ;
-            4: control_signals = `ALU_OUT | `ALU_FLAGS | ``A_READ;
+            4: control_signals = `ALU_OUT | `ALU_FLAGS | `A_READ;
             default: control_signals = 0;
         endcase
     endfunction

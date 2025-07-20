@@ -10,6 +10,8 @@ class Scoreboard(uvm_subscriber):
     def write(self, op):
         self.logger.info("Write SCB")
 
+        if op.rst == 1: return
+
         if Signal.CLK_HLT in op.expected_output: assert op.clk_halt == 1, f"ERROR: expceted HALT"
         else:                                    assert op.clk_halt == 0, f"ERROR: unexpected HALT"
 

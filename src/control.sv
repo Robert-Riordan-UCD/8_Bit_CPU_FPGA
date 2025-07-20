@@ -5,6 +5,8 @@
 `define STOREA  4'b0100
 `define LOAD_IM 4'b0101
 `define JUMP    4'b0110
+`define JUMPC   4'b0111
+`define JUMPZ   4'b1000
 `define OUT     4'b1110
 `define HALT    4'b1111
 
@@ -170,6 +172,24 @@ module control (
         endcase
     endfunction
 
+    function jump_carry(input [2:0] step);
+        case (step)
+            0: fetch(step);
+            1: fetch(step);
+            2: control_signals = alu_carry ? (`I_WRITE | `PC_JUMP) : 'b0;
+            default: control_signals = 0;
+        endcase
+    endfunction
+
+    function jump_zero(input [2:0] step);
+        case (step)
+            0: fetch(step);
+            1: fetch(step);
+            2: control_signals = alu_zero ? (`I_WRITE | `PC_JUMP) : 'b0;
+            default: control_signals = 0;
+        endcase
+    endfunction
+
     function output_en(input [2:0] step);
         case (step)
             0: fetch(step);
@@ -196,6 +216,8 @@ module control (
             `STOREA:  store_a(step_counter);
             `LOAD_IM: load_imediate(step_counter);
             `JUMP:    jump(step_counter);
+            `JUMPC:   jump_carry(step_counter);
+            `JUMPZ:   jump_zero(step_counter);
             `OUT:     output_en(step_counter);
             `HALT:    halt(step_counter);
             default:  fetch(step_counter);

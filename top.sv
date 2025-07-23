@@ -5,6 +5,7 @@
 `include "src/alu.sv"
 `include "src/random_access_memory.sv"
 `include "src/control.sv"
+`include "src/display.sv"
 
 /* This module connects each of the major CPU components together
  * and provides an inteface to the FPGA IO
@@ -166,7 +167,7 @@ module top (
 
     display u_display(
         .cpu_clk(cpu_clk),
-        .sys_clk(sys_clk),
+        .sys_clk(clk),
         .rst(reset),
         .enable(out_en),
         .bus(),

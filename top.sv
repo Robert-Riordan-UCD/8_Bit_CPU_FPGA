@@ -176,4 +176,20 @@ module top (
 
     // FPGA IO connections
     assign led = ~{bus[3:0], 1'b0, cpu_clk};
+    // 1 input clock mode
+    // 1 input clock pulse
+    // 1 input reset
+    
+    // 4inputs MAR address
+    // 8 inputs RAM data
+    // 1 input program mode
+    // 1 input program pulse
+
+    // 4 output digit
+    // 8 output segements
+
+    // Total inputs 17
+    // Total outputs 12
+    // Total IO 29
+    // Tang nano should have 45 GPIO pins so hopefully there shouldn't be an issue
 endmodule

@@ -61,11 +61,11 @@ module display (
             2: bcd_to_segments = `A | `B      | `D | `E      | `G;
             3: bcd_to_segments = `A | `B | `C | `D           | `G;
             4: bcd_to_segments =      `B | `C           | `F | `G;
-            5: bcd_to_segments = `A      | `C | `D | `E      | `G;
+            5: bcd_to_segments = `A      | `C | `D |      `F | `G;
             6: bcd_to_segments = `A      | `C | `D | `E | `F | `G;
             7: bcd_to_segments = `A | `B | `C;
             8: bcd_to_segments = `A | `B | `C | `D | `E | `F | `G;
-            9: bcd_to_segments = `A | `B | `C      | `E | `F | `G;
+            9: bcd_to_segments = `A | `B | `C | `D      | `F | `G;
             default: bcd_to_segments = 8'b0;
         endcase
     endfunction

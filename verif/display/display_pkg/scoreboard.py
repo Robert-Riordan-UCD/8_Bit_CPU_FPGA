@@ -1,5 +1,6 @@
 from pyuvm import uvm_subscriber
 from cocotb.binary import BinaryValue
+from .segments import Segments
 
 class Scoreboard(uvm_subscriber):
     def __init__(self, parent, name="scoreboard"):
@@ -11,16 +12,34 @@ class Scoreboard(uvm_subscriber):
     def write(self, op):
         self.logger.info("Write SCB")
 
-        # if op.rst == 1:
-        #     self.expected_value = 0
+        if op.rst == 1:
+            self.expected_digit = 0b0001
+            self.expected_segments = {
+                0b0001: Segments[0],
+                0b0010: Segments[0],
+                0b0100: Segments[0],
+                0b1000: Segments[0]
+            }
+        else:
+            # FIXME: I should only be updating on the rising edge of the clk but I'm not sure how. This should work because the signals only change on the falling edge so enable should remain constant throughout the clk high period
+            if (op.enable == 1) and op.cpu_clk == 1:
+                self.expected_segments = {
+                    0b0001: Segments[ int(op.bus.value) % 10],
+                    0b0010: Segments[(int(op.bus.value) // 10) % 10],
+                    0b0100: Segments[(int(op.bus.value) // 100) % 10],
+                    0b1000: Segments[(int(op.bus.value) // 1000) % 10]
+                }
+        
+        if self.expected_digit == "xxxx": return
 
-        # # Check value
-        # assert self.expected_value == op.value, f"ERROR value: expected {self.expected_value}, actual {op.value}"
-    
-        # # Check bus
-        # if op.write_to_bus == 1 and op.read_from_bus == 0 and op.rst == 0:
-        #     assert op.bus == self.expected_value, f"ERROR bus: expected {self.expected_value}, actual {op.bus}"
+        # Check correct digit is displayed
+        assert op.digit.value == self.expected_digit, f"ERROR wrong digit selected: Expected {self.expected_digit}, Actual {op.digit.value}"
 
-        # if op.read_from_bus == 1 and op.write_to_bus == 0 and op.rst == 0:
-        #     self.expected_value = op.bus_driver.value
-    
+        # Check correct segments are displayed
+        assert op.segments.value == self.expected_segments[self.expected_digit], f"ERROR wrong segments: Expected {self.expected_segments[self.expected_digit]:02x}, Actual {int(op.segments.value):02x}"
+
+        if op.rst == 0:
+            self.expected_digit *= 2
+            if self.expected_digit > 8:
+                self.expected_digit = 0b0001
+

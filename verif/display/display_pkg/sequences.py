@@ -52,9 +52,16 @@ class EdgeCases(uvm_sequence):
 
 class Random(uvm_sequence):
     async def body(self):
+        rst = SeqItem(rst=1)
+        await self.start_item(rst)
+        await self.finish_item(rst)
+        rst = SeqItem(rst=1)
+        await self.start_item(rst)
+        await self.finish_item(rst)
+
         ops = [SeqItem() for _ in range(200)]
         for op in ops:
-            op.rst = 1 if randint(0, 10) == 0 else 0 # Reset 1 in every 10 cycles randomly
+            # op.rst = 1 if randint(0, 10) == 0 else 0 # Reset 1 in every 10 cycles randomly
             op.enable = randint(0, 1)
             op.bus = randint(0, 0xFF)
 

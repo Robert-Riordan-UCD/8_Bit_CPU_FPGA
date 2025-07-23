@@ -1,8 +1,12 @@
 """
     Coverage Goals
+    All valid sements hit
+    All valid digits hit
+    All bus values in
 """
 
 from pyuvm import uvm_subscriber, uvm_analysis_export, uvm_error
+from .segments import Segments
 
 def intxz(value):
     try:
@@ -15,47 +19,39 @@ class Coverage(uvm_subscriber):
         super().__init__(name, parent)
         self.logger.info("Init COV")
 
+        self.segments = set()
+        self.digits = set()
         self.bus_inputs = set()
-        self.values = set()
-        self.bus_outputs = set()
 
     def write(self, op):
-        self.logger.info("Write COV")
+        # self.logger.info("Write COV")
 
-        # if op.read_from_bus.value == 1 and op.write_to_bus.value == 0:
-        #     if not (i := intxz(op.bus)) is None:
-        #         self.bus_inputs.add(intxz(i))
-        
-        # if not (v := intxz(op.value)) is None:
-        #     self.values.add(v)
+        if (s := intxz(op.segments.value)): self.segments.add(s)
+        if (d := intxz(op.digit.value)): self.digits.add(d)
 
-        # if op.write_to_bus == 1 and op.read_from_bus == 0:
-        #     if not (o := intxz(op.bus)) is None:
-        #         self.bus_outputs.add(intxz(o))
+        if op.enable == 1 and op.cpu_clk == 1 and op.rst == 0:
+            if not (b := intxz(op.bus.value)) is None:
+                self.bus_inputs.add(b)
+
         
     def report_phase(self):
         self.logger.info("Report COV")
+
+        for i, s in enumerate(Segments):
+            if not s in self.segments:
+                self.logger.error(f"Coverage ERROR: Missed segments for {i} ({s:02x})")
         
-        # input_cov = len(self.bus_inputs)/0x100
-        # if input_cov == 1:
-        #     self.logger.info(f"Coverage: All bus inputs covered")
-        # elif input_cov > 0.8:
-        #     self.logger.warning(f"Coverage MISS: {100*input_cov:0.1f}% bus inputs covered ({len(self.bus_inputs)}/{0x100})")
-        # else:
-        #     self.logger.error(f"Coverage MISS: {100*input_cov:0.1f}% bus inputs covered ({len(self.bus_inputs)}/{0x100})")            
+        for i in range(1, 5):
+            if not 2**1 in self.digits:
+                self.logger.error(f"Coverage ERROR: Missed digit {i**2:04b} ({2**1})")
 
-        # value_cov = len(self.values)/0x100
-        # if value_cov == 1:
-        #     self.logger.info(f"Coverage: All bus inputs covered")
-        # elif value_cov > 0.8:
-        #     self.logger.warning(f"Coverage MISS: {100*value_cov:0.1f}% of values covered ({len(self.values)}/{0x100})")
-        # else:
-        #     self.logger.error(f"Coverage MISS: {100*value_cov:0.1f}% of values covered ({len(self.values)}/{0x100})")
-
-        # output_cov = len(self.bus_outputs)/0x100
-        # if output_cov == 1:
-        #     self.logger.info(f"Coverage: All bus outputs covered")
-        # elif output_cov > 0.8:
-        #     self.logger.warning(f"Coverage MISS: {100*output_cov:0.1f}% bus outputs covered ({len(self.bus_outputs)}/{0x100})")
-        # else:
-        #     self.logger.error(f"Coverage MISS: {100*output_cov:0.1f}% bus outputs covered ({len(self.bus_outputs)}/{0x100})")
+        bus_cov = len(self.bus_inputs)/0x100
+        if bus_cov == 1.0:
+            self.logger.info(f"Bus coverage: {bus_cov*100:0.1f}% ({len(self.bus_inputs)}/{0x100})")
+        elif bus_cov > 0.8:
+            self.logger.warning(f"Bus coverage: {bus_cov*100:0.1f}% ({len(self.bus_inputs)}/{0x100})")
+            for i in range(0x100):
+                if not i in self.bus_inputs:
+                    self.logger.info(f"Bus input missed: 0x{i:02x}")
+        else:
+            self.logger.error(f"Bus coverage: {bus_cov*100:0.1f}% ({len(self.bus_inputs)}/{0x100})")

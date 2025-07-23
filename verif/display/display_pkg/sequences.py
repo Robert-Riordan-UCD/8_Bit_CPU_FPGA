@@ -5,12 +5,10 @@ from .seq_item import SeqItem
 
 class TestAllSeq(uvm_sequence):
     async def body(self):
-        # ops = AllOperations("all operations")
-        # edge = EdgeCases("edge cases")
+        ops = AllOperations("all operations")
         random = Random("random")
 
-        # await ops.start(self.sequencer)
-        # await edge.start(self.sequencer)
+        await ops.start(self.sequencer)
         await random.start(self.sequencer)
 
 """
@@ -19,31 +17,10 @@ class TestAllSeq(uvm_sequence):
 class AllOperations(uvm_sequence):
     async def body(self):
         seqs = [
-            SeqItem(name="read", bus_driver=0xAB, read_from_bus=1),
-            SeqItem(name="write", write_to_bus=1),
             SeqItem(name="rst", rst=1),
-            SeqItem(name="read & write", bus_driver=0xAB, read_from_bus=1, write_to_bus=1),
-            SeqItem(name="read & rst", bus_driver=0xAB, read_from_bus=1, rst=1),
-            SeqItem(name="write & rst", write_to_bus=1, rst=1),
-            SeqItem(name="read & write & rst", bus_driver=0xAB, read_from_bus=1, write_to_bus=1, rst=1),
+            SeqItem(name="enable", bus=0xAB, enable=1),
+            SeqItem(name="enable and rst", rst=1, bus=0xCD, enable=1),
             SeqItem(name="noop"),
-        ]
-
-        for seq in seqs:
-            await self.start_item(seq)
-            await self.finish_item(seq)
-
-
-"""
-    Cases with 0 or 0xFF
-"""
-class EdgeCases(uvm_sequence):
-    async def body(self):
-        seqs = [
-            SeqItem(name="read 0", bus_driver=0, read_from_bus=1),
-            SeqItem(name="write 0", write_to_bus=1),
-            SeqItem(name="read 0xFF", bus_driver=0xFF, read_from_bus=1),
-            SeqItem(name="write 0xFF", write_to_bus=1),
         ]
 
         for seq in seqs:
@@ -52,16 +29,9 @@ class EdgeCases(uvm_sequence):
 
 class Random(uvm_sequence):
     async def body(self):
-        rst = SeqItem(rst=1)
-        await self.start_item(rst)
-        await self.finish_item(rst)
-        rst = SeqItem(rst=1)
-        await self.start_item(rst)
-        await self.finish_item(rst)
-
-        ops = [SeqItem() for _ in range(200)]
+        ops = [SeqItem() for _ in range(5000)]
         for op in ops:
-            # op.rst = 1 if randint(0, 10) == 0 else 0 # Reset 1 in every 10 cycles randomly
+            op.rst = 1 if randint(0, 10) == 0 else 0 # Reset 1 in every 10 cycles randomly
             op.enable = randint(0, 1)
             op.bus = randint(0, 0xFF)
 

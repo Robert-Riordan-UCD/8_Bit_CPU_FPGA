@@ -10,7 +10,7 @@ class Scoreboard(uvm_subscriber):
         self.expected_digit = 'xxxx'
     
     def write(self, op):
-        self.logger.info("Write SCB")
+        # self.logger.info("Write SCB")
 
         if op.rst == 1:
             self.expected_digit = 0b0001

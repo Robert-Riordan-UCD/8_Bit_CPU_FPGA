@@ -164,7 +164,15 @@ module top (
         .out_en(out_en)
     );
 
-    // output_module u_output();
+    display u_display(
+        .cpu_clk(cpu_clk),
+        .sys_clk(sys_clk),
+        .rst(reset),
+        .enable(out_en),
+        .bus(),
+        .segments(),
+        .digit()
+    );
 
     // FPGA IO connections
     assign led = ~{bus[3:0], 1'b0, cpu_clk};

@@ -2,7 +2,7 @@
 
 | Module                  | RTL | Verified |
 | :---------------------- | :-: | :-: |
-| Clock                   |✅|❌|
+| Clock                   |✅|✅|
 | Program Counter         |✅|✅|
 | A register              |✅|✅|
 | B Register              |✅|✅|

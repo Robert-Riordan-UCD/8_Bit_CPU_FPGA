@@ -104,15 +104,15 @@ module control (
     /*
         Control instructions
     */
-    function fetch(input [2:0] step);
+    task fetch(input [2:0] step);
         case (step)
             0: control_signals = `PC_OUT | `MAR_READ;
             1: control_signals = `RAM_WRITE | `I_READ | `PC_INC;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
-    function load_a(input [2:0] step);
+    task load_a(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -120,9 +120,9 @@ module control (
             3: control_signals = `RAM_WRITE | `A_READ;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
-    function store_a(input [2:0] step);
+    task store_a(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -130,18 +130,18 @@ module control (
             3: control_signals = `A_WRITE | `RAM_READ;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
-    function load_imediate(input [2:0] step);
+    task load_imediate(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
             2: control_signals = `I_WRITE | `A_READ;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
-    function add(input [2:0] step);
+    task add(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -150,9 +150,9 @@ module control (
             4: control_signals = `ALU_OUT | `ALU_FLAGS | `A_READ;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
-    function sub(input [2:0] step);
+    task sub(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -161,52 +161,52 @@ module control (
             4: control_signals = `ALU_OUT | `ALU_FLAGS | `ALU_SUB | `A_READ;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
-    function jump(input [2:0] step);
+    task jump(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
             2: control_signals = `I_WRITE | `PC_JUMP;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
-    function jump_carry(input [2:0] step);
+    task jump_carry(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
             2: control_signals = alu_carry ? (`I_WRITE | `PC_JUMP) : 'b0;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
-    function jump_zero(input [2:0] step);
+    task jump_zero(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
             2: control_signals = alu_zero ? (`I_WRITE | `PC_JUMP) : 'b0;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
-    function output_en(input [2:0] step);
+    task output_en(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
             2: control_signals = `A_WRITE | `OUT_EN;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
-    function halt(input [2:0] step);
+    task halt(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
             2: control_signals = `CLK_HLT;
             default: control_signals = 0;
         endcase
-    endfunction
+    endtask
 
     always_comb begin
         case (instruction)

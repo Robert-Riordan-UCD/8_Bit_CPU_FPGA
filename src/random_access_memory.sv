@@ -16,6 +16,14 @@ module random_access_memory (
 
     logic [7:0] data [16];
 
+    initial begin        
+        data[0] = 8'b01011000; // LOAD IM 8
+        data[1] = 8'b11100000; // OUT
+        data[2] = 8'b01010001; // LOAD IM 1
+        data[3] = 8'b11100000; // OUT
+        data[4] = 8'b01100000; // JMP 0
+    end
+
     always_ff @(posedge clk) begin
         if (manual_mode) begin
             if (manual_read) begin

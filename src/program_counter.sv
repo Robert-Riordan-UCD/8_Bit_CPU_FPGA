@@ -9,7 +9,7 @@ module program_counter (
     inout [7:0] bus
 );
 
-    logic [3:0] count;
+    logic [3:0] count=0;
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin

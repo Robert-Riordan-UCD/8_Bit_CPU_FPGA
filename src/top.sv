@@ -1,35 +1,42 @@
-`include "src/clock.sv"
-`include "src/program_counter.sv"
-`include "src/memory_address_register.sv"
-`include "src/register.sv"
-`include "src/alu.sv"
-`include "src/random_access_memory.sv"
-`include "src/control.sv"
-`include "src/display.sv"
-
 /* This module connects each of the major CPU components together
  * and provides an inteface to the FPGA IO
  */
 module top (
     // Onboard IO
-    input logic clk, // Internal system clock
-    input logic btn1_n,
-    input logic btn2_n,
-    output logic [5:0] led,
+    // input logic clk, // Internal system clock
+    // input logic btn1_n,
+    // input logic btn2_n,
+    // output logic [5:0] led,
 
-    // GPIO
-    input logic gpio_slide_switch, // clock mode
-    input logic gpio_button // clock trigger FIXME: Needs debouncing
+    // // GPIO
+    // input logic gpio_slide_switch, // clock mode
+    // input logic gpio_button // clock trigger FIXME: Needs debouncing
+
+    input logic sys_clk,
+    input logic reset,
+
+    input logic clk_mode,
+    input logic clk_pulse,
+
+    input logic [3:0] mar_address,
+    input logic [7:0] ram_data,
+    input logic ram_mode,
+    input logic ram_pulse,
+
+    output logic [3:0] digit,
+    output logic [7:0] segments
+    // 4 output digit
+    // 8 output segements
 );
     // Internal signals
     logic cpu_clk;
 
-    logic reset;
-    assign reset = 0;
+    // logic reset;
+    // assign reset = 0;
 
-    logic clk_mode, clk_toggle;
-    assign clk_mode = gpio_slide_switch;
-    assign clk_toggle = gpio_button;
+    // logic clk_mode, clk_toggle;
+    // assign clk_mode = gpio_slide_switch;
+    // assign clk_toggle = gpio_button;
 
     tri [7:0] bus;
 
@@ -62,7 +69,7 @@ module top (
 
     // Core modules
     clock u_clock (
-        .sys_clk(clk),
+        .sys_clk(sys_clk),
         .mode(clk_mode),
         .manual_toggle(clk_toggle),
         .halt(clk_halt),
@@ -75,17 +82,17 @@ module top (
         .inc(pc_inc),
         .jump(pc_jump),
         .out(pc_out),
-        .bus()
+        .bus(bus)
     );
 
     memory_address_register u_mar (
         .clk(cpu_clk),
         .rst(reset),
         .read_from_bus(mar_read_from_bus),
-        .manual_mode(),
-        .manual_read(),
-        .manual_switches(),
-        .bus(),
+        .manual_mode(ram_mode),
+        .manual_read(ram_pulse),
+        .manual_switches(mar_address),
+        .bus(bus[3:0]),
         .address(memory_address)
     );
 
@@ -94,7 +101,7 @@ module top (
         .rst(reset),
         .read_from_bus(a_reg_read_from_bus),
         .write_to_bus(a_reg_write_to_bus),
-        .bus(),
+        .bus(bus),
         .value(a_reg_value)
     );
 
@@ -102,11 +109,11 @@ module top (
         .clk(cpu_clk),
         .read_from_bus(ram_read_from_bus),
         .write_to_bus(ram_write_to_bus),
-        .manual_mode(),
-        .manual_read(),
+        .manual_mode(ram_mode),
+        .manual_read(ram_pulse),
         .address(memory_address),
-        .program_switches(),
-        .bus()
+        .program_switches(ram_data),
+        .bus(bus)
     );
 
     alu u_alu (
@@ -117,7 +124,7 @@ module top (
         .out(alu_out),
         .subtract(alu_subtract),
         .flags_in(alu_flags_in),
-        .bus(),
+        .bus(bus),
         .carry(alu_carry),
         .zero(alu_zero)
     );
@@ -127,7 +134,7 @@ module top (
         .rst(reset),
         .read_from_bus(i_reg_read_from_bus),
         .write_to_bus(i_reg_write_to_bus),
-        .bus(),
+        .bus(bus),
         .value(instruction)
     );
     
@@ -136,7 +143,7 @@ module top (
         .rst(reset),
         .read_from_bus(b_reg_read_from_bus),
         .write_to_bus(b_reg_write_to_bus),
-        .bus(),
+        .bus(bus),
         .value(b_reg_value)
     );
     
@@ -170,13 +177,13 @@ module top (
         .sys_clk(clk),
         .rst(reset),
         .enable(out_en),
-        .bus(),
-        .segments(),
-        .digit()
+        .bus(bus),
+        .segments(segments),
+        .digit(digit)
     );
 
     // FPGA IO connections
-    assign led = ~{bus[3:0], 1'b0, cpu_clk};
+    // assign led = ~{bus[3:0], 1'b0, cpu_clk};
     // 1 input clock mode
     // 1 input clock pulse
     // 1 input reset

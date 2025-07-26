@@ -93,7 +93,7 @@ module control (
     localparam STEP_MAX = 6;
     logic [2:0] step_counter;
 
-    always_ff @(negedge clk) begin
+    always_ff @(negedge clk or posedge rst) begin
         if (rst || step_counter == STEP_MAX) begin
             step_counter <= 0;
         end else begin
@@ -104,7 +104,7 @@ module control (
     /*
         Control instructions
     */
-    task fetch(input [2:0] step);
+    task automatic fetch(input [2:0] step);
         case (step)
             0: control_signals = `PC_OUT | `MAR_READ;
             1: control_signals = `RAM_WRITE | `I_READ | `PC_INC;
@@ -112,7 +112,7 @@ module control (
         endcase
     endtask
 
-    task load_a(input [2:0] step);
+    task automatic load_a(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -122,7 +122,7 @@ module control (
         endcase
     endtask
 
-    task store_a(input [2:0] step);
+    task automatic store_a(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -132,7 +132,7 @@ module control (
         endcase
     endtask
 
-    task load_imediate(input [2:0] step);
+    task automatic load_imediate(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -141,7 +141,7 @@ module control (
         endcase
     endtask
 
-    task add(input [2:0] step);
+    task automatic add(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -152,7 +152,7 @@ module control (
         endcase
     endtask
 
-    task sub(input [2:0] step);
+    task automatic sub(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -163,7 +163,7 @@ module control (
         endcase
     endtask
 
-    task jump(input [2:0] step);
+    task automatic jump(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -172,7 +172,7 @@ module control (
         endcase
     endtask
 
-    task jump_carry(input [2:0] step);
+    task automatic jump_carry(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -181,7 +181,7 @@ module control (
         endcase
     endtask
 
-    task jump_zero(input [2:0] step);
+    task automatic jump_zero(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -190,7 +190,7 @@ module control (
         endcase
     endtask
 
-    task output_en(input [2:0] step);
+    task automatic output_en(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);
@@ -199,7 +199,7 @@ module control (
         endcase
     endtask
 
-    task halt(input [2:0] step);
+    task automatic halt(input [2:0] step);
         case (step)
             0: fetch(step);
             1: fetch(step);

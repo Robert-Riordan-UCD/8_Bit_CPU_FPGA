@@ -71,7 +71,7 @@ module top (
     clock u_clock (
         .sys_clk(sys_clk),
         .mode(clk_mode),
-        .manual_toggle(clk_toggle),
+        .manual_toggle(clk_pulse),
         .halt(clk_halt),
         .cpu_clk(cpu_clk)
     );
@@ -174,7 +174,7 @@ module top (
 
     display u_display(
         .cpu_clk(cpu_clk),
-        .sys_clk(clk),
+        .sys_clk(sys_clk),
         .rst(reset),
         .enable(out_en),
         .bus(bus),

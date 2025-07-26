@@ -94,7 +94,9 @@ module control (
     logic [2:0] step_counter;
 
     always_ff @(negedge clk or posedge rst) begin
-        if (rst || step_counter == STEP_MAX) begin
+        if (rst) begin
+            step_counter <= 0;
+        end else if (step_counter == STEP_MAX) begin
             step_counter <= 0;
         end else begin
             step_counter <= step_counter + 1;

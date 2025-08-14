@@ -22,11 +22,16 @@ module fpga_interface (
     /* Bus output */
     output logic [7:0] bus_output,
 
+    /* RAM programming */
+    input logic ram_mode,
+    input logic ram_pulse,
+    input logic [3:0] mar_switches,
+
     /* Debug leds */
     output logic [5:0] led
 );
     /* Debug LEDs */
-    assign led = ~{pc_out, cpu_clk, pc_bus_out[3:0]};
+    assign led = ~{ram_pulse, cpu_clk, memory_address};
     
     /* Reset is onboard button */
     logic rst;
@@ -60,6 +65,7 @@ module fpga_interface (
     logic [7:0] i_bus_out;
     
     /* Other data */
+    logic [3:0] memory_address;
     logic [7:0] instruction;
 
     /* Clock */
@@ -84,6 +90,19 @@ module fpga_interface (
         .jump(pc_jump),
         .bus_in(bus_out),
         .bus_out(pc_bus_out)
+    );
+
+    /* Memory Address Register */
+    // Pins 28, 29, 30, 33 (MAR switches)
+    memory_address_register u_mar (
+        .clk(cpu_clk),
+        .rst(rst),
+        .read_from_bus(mar_read_from_bus),
+        .manual_mode(ram_mode),
+        .manual_read(ram_pulse),
+        .manual_switches(mar_switches),
+        .bus(bus_out[3:0]),
+        .address(memory_address)
     );
 
     /* Instruction register */

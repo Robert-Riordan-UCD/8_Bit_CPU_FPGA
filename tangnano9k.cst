@@ -1,3 +1,21 @@
+IO_LOC  "mar_switches[3]" 28;
+IO_PORT "mar_switches[3]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
+IO_LOC  "mar_switches[2]" 29;
+IO_PORT "mar_switches[2]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
+IO_LOC  "mar_switches[1]" 30;
+IO_PORT "mar_switches[1]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
+IO_LOC  "mar_switches[0]" 33;
+IO_PORT "mar_switches[0]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
+IO_LOC  "ram_pulse" 34;
+IO_PORT "ram_pulse" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
+IO_LOC  "ram_mode" 56;
+IO_PORT "ram_mode" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
 IO_LOC  "rst_n" 3;
 IO_PORT "rst_n" IO_TYPE=LVCMOS18 PULL_MODE=UP;
 

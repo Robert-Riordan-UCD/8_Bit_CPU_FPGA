@@ -1,14 +1,14 @@
-IO_LOC  "gpio_button" 57;
-IO_PORT "gpio_button" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+IO_LOC  "clk_halt" 56;
+IO_PORT "clk_halt" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "gpio_slide_switch" 69;
-IO_PORT "gpio_slide_switch" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+IO_LOC  "clk_output" 69;
+IO_PORT "clk_output" DRIVE=8 IO_TYPE=LVCMOS18;
 
-IO_LOC  "btn1_n" 3;
-IO_PORT "btn1_n" IO_TYPE=LVCMOS18 PULL_MODE=UP;
+IO_LOC  "clk_mode" 68;
+IO_PORT "clk_mode" IO_TYPE=LVCMOS18 PULL_MODE=UP;
 
-IO_LOC  "btn2_n" 4;
-IO_PORT "btn2_n" IO_TYPE=LVCMOS18 PULL_MODE=UP;
+IO_LOC  "clk_pulse" 57;
+IO_PORT "clk_pulse" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
 IO_LOC  "led[0]" 10;
 IO_PORT "led[0]" DRIVE=8 IO_TYPE=LVCMOS18;

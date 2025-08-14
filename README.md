@@ -12,5 +12,6 @@
 | Arithmetic Logic Unit   |✅|✅|❌|
 | Control                 |✅|✅|❌|
 | Output                  |✅|✅|❌|
+| Bus                     |✅|✅|✅|
 ||||
 | Top                     |〰️|❌|❌|

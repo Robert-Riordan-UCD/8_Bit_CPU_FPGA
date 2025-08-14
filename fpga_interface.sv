@@ -9,6 +9,7 @@
 `include "src/top.sv"
 
 module fpga_interface (
+    /* Onboard signals */
     input logic clk,
     input logic rst_n,
 
@@ -21,12 +22,16 @@ module fpga_interface (
     /* Program counter test */
     input logic pc_inc,
     input logic pc_jump,
+    /* I register */
+    input i_read_from_bus,
+
+    /* Bus output */
     output logic [7:0] bus_output,
 
     output logic [5:0] led
 );
     /* Debug LEDs */
-    assign led = ~{1'b0, cpu_clk, ~bus_output[3:0]};
+    assign led = ~{1'b0, cpu_clk, ~instruction[3:0]};
     
     /* Reset is onboard button */
     logic rst;
@@ -49,7 +54,7 @@ module fpga_interface (
 
     assign clk_output = ~cpu_clk;
 
-    /* Program Counter test */
+    /* Program counter test */
     // Pin 34 - button - VCC (INC)
     // Pin 33 - button - VCC (JMP)
     logic [7:0] pc_out;
@@ -62,9 +67,21 @@ module fpga_interface (
         .bus_out(pc_out)
     );
 
+    /* Instruction register test */
+    logic [7:0] i_bus_out;
+    logic [7:0] instruction;
+    register #(8'h0F) u_i_reg (
+        .clk(cpu_clk),
+        .rst(rst),
+        .read_from_bus(i_read_from_bus),
+        .bus_in(pc_out),
+        .bus_out(i_bus_out),
+        .value(instruction)
+    );
+
     /* Bus output test */
     // Pins 40, 35, 41, 42, 51, 52, 53, 54, 55
     // Each pin - resistor - led - VCC
-    assign bus_output = ~pc_out;
+    assign bus_output = ~i_bus_out;
 
 endmodule

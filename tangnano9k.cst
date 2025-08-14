@@ -1,3 +1,6 @@
+IO_LOC  "i_read_from_bus" 30;
+IO_PORT "i_read_from_bus" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
 IO_LOC  "pc_jump" 33;
 IO_PORT "pc_jump" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 

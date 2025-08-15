@@ -60,10 +60,15 @@ module fpga_interface (
     /* Buses */
     logic [7:0] pc_bus_out;
     logic [7:0] i_bus_out;
+    logic [7:0] ram_bus_out;
+    logic [7:0] a_bus_out;
+    logic [7:0] b_bus_out;
     
     /* Other data */
     logic [3:0] memory_address;
     logic [7:0] instruction;
+    logic [7:0] a_reg_value;
+    logic [7:0] b_reg_value;
 
     /* Clock */
     // Pin 69 - resistor - led - VCC (Output)
@@ -114,6 +119,26 @@ module fpga_interface (
         .bus_out(ram_bus_out)
     );
 
+    /* A register */
+    register u_a_reg (
+        .clk(cpu_clk),
+        .rst(rst),
+        .read_from_bus(a_reg_read_from_bus),
+        .bus_in(bus_data),
+        .bus_out(a_bus_out),
+        .value(a_reg_value)
+    );
+
+    /* B register */
+    register u_b_reg (
+        .clk(cpu_clk),
+        .rst(rst),
+        .read_from_bus(b_reg_read_from_bus),
+        .bus_in(bus_data),
+        .bus_out(b_bus_out),
+        .value(b_reg_value)
+    );
+
     /* Instruction register */
     register #(8'h0F) u_i_reg (
         .clk(cpu_clk),
@@ -162,8 +187,8 @@ module fpga_interface (
 
     assign lane_select = {
         1'b0,
-        1'b0,
-        1'b0,
+        b_reg_write_to_bus,
+        a_reg_write_to_bus,
         i_reg_write_to_bus,
         ram_write_to_bus,
         pc_out
@@ -171,8 +196,8 @@ module fpga_interface (
 
     assign lane_data = {
         8'b10101010,
-        8'b11001100,
-        8'b11100010,
+        b_bus_out,
+        a_bus_out,
         i_bus_out,
         ram_bus_out,
         pc_bus_out
@@ -189,11 +214,11 @@ module fpga_interface (
 
     logic [7:0] bus_data;
     // assign bus_output = ~bus_data;
-    assign bus_output = ~bus_data;
+    assign bus_output = ~a_reg_value;
 
     /* Debug LEDs */
     // assign led = ~{ram_pulse, cpu_clk, pc_bus_out[3:0]};
     // assign led = ~{cpu_clk, pc_inc, i_reg_read_from_bus, ram_write_to_bus, mar_read_from_bus, pc_out};
-    assign led = ~{lane_select};
+    assign led = ~{a_reg_read_from_bus, lane_select[4:0]};
 
 endmodule

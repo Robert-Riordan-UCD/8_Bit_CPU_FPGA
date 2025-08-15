@@ -1,11 +1,11 @@
 # Current Design Status
 
-| Module                  | RTL | Verified | Runs independently on FPGA |
+| Module                  | RTL | Verified | Runs on FPGA |
 | :---------------------- | :-: | :-: | :-: |
 | Clock                   |✅|✅|✅|
 | Program Counter         |✅|〰️|✅|
-| A register              |✅|〰️|❌|
-| B Register              |✅|〰️|❌|
+| A register              |✅|〰️|✅|
+| B Register              |✅|〰️|✅|
 | Memory Address Register |✅|✅|✅|
 | Instruction Register    |✅|〰️|✅|
 | Random Access Memory    |✅|〰️|✅|

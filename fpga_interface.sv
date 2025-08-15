@@ -30,9 +30,6 @@ module fpga_interface (
     /* Debug leds */
     output logic [5:0] led
 );
-    /* Debug LEDs */
-    assign led = ~{ram_pulse, cpu_clk, memory_address};
-    
     /* Reset is onboard button */
     logic rst;
     assign rst = ~rst_n;
@@ -88,11 +85,11 @@ module fpga_interface (
         .rst(rst),
         .inc(pc_inc),
         .jump(pc_jump),
-        .bus_in(bus_out),
+        .bus_in(bus_data),
         .bus_out(pc_bus_out)
     );
 
-    /* Memory Address Register */
+    /* Memory address register */
     // Pins 28, 29, 30, 33 (MAR switches)
     memory_address_register u_mar (
         .clk(cpu_clk),
@@ -101,8 +98,20 @@ module fpga_interface (
         .manual_mode(ram_mode),
         .manual_read(ram_pulse),
         .manual_switches(mar_switches),
-        .bus(bus_out[3:0]),
+        .bus(bus_data[3:0]),
         .address(memory_address)
+    );
+
+    /* Random access memory */
+    random_access_memory u_ram(
+        .clk(cpu_clk),
+        .read_from_bus(ram_read_from_bus),
+        .manual_mode(ram_mode),
+        .manual_read(ram_pulse),
+        .address(memory_address),
+        .program_switches(program_switches),
+        .bus_in(bus_data),
+        .bus_out(ram_bus_out)
     );
 
     /* Instruction register */
@@ -110,11 +119,12 @@ module fpga_interface (
         .clk(cpu_clk),
         .rst(rst),
         .read_from_bus(i_reg_read_from_bus),
-        .bus_in(bus_out),
+        .bus_in(bus_data),
         .bus_out(i_bus_out),
         .value(instruction)
     );
 
+    /* Control */
     control u_control(
         .clk(cpu_clk),
         .rst(rst),
@@ -145,22 +155,45 @@ module fpga_interface (
     // Each pin - resistor - led - VCC
     // Pin 29 - button - VCC (PC write to bus)
     // Pin 28 - button - VCC (I write to bus)
+    localparam LANES = 6;
+    localparam BUS_WIDTH = 8;
+    logic [LANES-1:0] lane_select;
+    logic [LANES*BUS_WIDTH-1:0] lane_data;
+
+    assign lane_select = {
+        1'b0,
+        1'b0,
+        1'b0,
+        i_reg_write_to_bus,
+        ram_write_to_bus,
+        pc_out
+    };
+
+    assign lane_data = {
+        8'b10101010,
+        8'b11001100,
+        8'b11100010,
+        i_bus_out,
+        ram_bus_out,
+        pc_bus_out
+    };
+
     bus #(
-        .WIDTH(8),
-        .LANES(2)
+        .WIDTH(BUS_WIDTH),
+        .LANES(LANES)
     ) u_bus (
-        .lane_select({
-            pc_out,
-            i_write_to_bus
-        }),
-        .lane_data({
-            pc_bus_out,
-            i_bus_out
-        }),
-        .bus_data(bus_out)
+        .lane_select(lane_select),
+        .lane_data(lane_data),
+        .bus_data(bus_data)
     );
 
-    logic [7:0] bus_out;
-    assign bus_output = ~bus_out;
+    logic [7:0] bus_data;
+    // assign bus_output = ~bus_data;
+    assign bus_output = ~bus_data;
+
+    /* Debug LEDs */
+    // assign led = ~{ram_pulse, cpu_clk, pc_bus_out[3:0]};
+    // assign led = ~{cpu_clk, pc_inc, i_reg_read_from_bus, ram_write_to_bus, mar_read_from_bus, pc_out};
+    assign led = ~{lane_select};
 
 endmodule

@@ -14,4 +14,6 @@
 | Output                  |✅|〰️|✅|
 | Bus                     |✅|✅|✅|
 ||||
-| Top                     |〰️|❌|❌|
+| Top                     |✅|❌|✅|
+
+I had to redesign the bus to avoid tristate logic, so all modules that write to the bus need to be re-verified. But it's working on the FPGA right now!

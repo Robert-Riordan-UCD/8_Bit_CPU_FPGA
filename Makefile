@@ -10,7 +10,7 @@ all: fpga_interface.sv src/* tangnano9k.cst
 	make bitstream
 
 synth:
-	yosys -p "read_verilog -D WAIT_TIME=13500000 -D DISPLAY_WAIT_TIME=7000000 -sv fpga_interface.sv; synth_gowin -json ./build/synth.json"
+	yosys -p "read_verilog -D WAIT_TIME=300000 -D DISPLAY_WAIT_TIME=70000 -sv fpga_interface.sv; synth_gowin -json ./build/synth.json"
 
 pnr: 
 	nextpnr-gowin --json ./build/synth.json --write ./build/pnr.json --device GW1NR-LV9QN88PC6/I5 --family GW1N-9C --cst tangnano9k.cst

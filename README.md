@@ -11,7 +11,7 @@
 | Random Access Memory    |✅|〰️|✅|
 | Arithmetic Logic Unit   |✅|〰️|✅|
 | Control                 |✅|✅|✅|
-| Output                  |✅|✅|❌|
+| Output                  |✅|〰️|✅|
 | Bus                     |✅|✅|✅|
 ||||
 | Top                     |〰️|❌|❌|

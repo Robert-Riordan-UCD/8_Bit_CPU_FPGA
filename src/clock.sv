@@ -10,7 +10,7 @@ module clock (
 
     output logic cpu_clk
 );
-    logic [23:0] count;
+    logic [$clog2(`WAIT_TIME)-1:0] count;
     logic cont_clk, man_clk;
 
     initial begin

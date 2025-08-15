@@ -19,13 +19,14 @@ module fpga_interface (
     input logic clk_pulse,
     output logic clk_output,
 
-    /* Bus output */
-    output logic [7:0] bus_output,
-
     /* RAM programming */
     input logic ram_mode,
     input logic ram_pulse,
     input logic [3:0] mar_switches,
+
+    /* Display */
+    output logic [3:0] digit,
+    output logic [7:0] segments,
 
     /* Debug leds */
     output logic [5:0] led
@@ -189,9 +190,23 @@ module fpga_interface (
         .out_en(out_en)
     );
 
-    /* Bus */
-    // Pins 40, 35, 41, 42, 51, 52, 53, 54, 55 (BUS)
+    /* Display */
+    // Pins 40, 35, 41, 42, 51, 52, 53, 54, 55 (Segments)
+    // Pins 32, 31, 49, 48 (Digit)
     // Each pin - resistor - led - VCC
+    display u_display(
+        .cpu_clk(cpu_clk),
+        .sys_clk(clk),
+        .rst(rst),
+        .enable(out_en),
+        .bus(bus_data),
+        .segments(segments),
+        .digit(digit)
+    );
+
+
+
+    /* Bus */
     localparam LANES = 6;
     localparam BUS_WIDTH = 8;
     logic [LANES-1:0] lane_select;
@@ -225,12 +240,8 @@ module fpga_interface (
     );
 
     logic [7:0] bus_data;
-    // assign bus_output = ~bus_data;
-    assign bus_output = ~alu_bus_out;
 
     /* Debug LEDs */
-    // assign led = ~{ram_pulse, cpu_clk, pc_bus_out[3:0]};
-    // assign led = ~{cpu_clk, pc_inc, i_reg_read_from_bus, ram_write_to_bus, mar_read_from_bus, pc_out};
-    assign led = ~{a_reg_read_from_bus, lane_select[4:0]};
+    assign led = ~{out_en, lane_select[4:0]};
 
 endmodule

@@ -242,6 +242,6 @@ module fpga_interface (
     logic [7:0] bus_data;
 
     /* Debug LEDs */
-    assign led = ~{alu_carry, alu_flags_in, ram_read_from_bus, a_reg_write_to_bus};
+    assign led = ~{clk_halt, alu_zero, alu_carry, alu_flags_in, ram_read_from_bus, a_reg_write_to_bus};
 
 endmodule

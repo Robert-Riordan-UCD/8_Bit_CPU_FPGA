@@ -5,7 +5,6 @@ module alu (
     input [7:0] a,
     input [7:0] b,
 
-    input out,
     input subtract,
     input flags_in,
 
@@ -16,7 +15,7 @@ module alu (
 
     logic [8:0] sum; // Extra bit for carry detection
     assign sum = subtract ? a - b : a + b;
-    assign bus = out ? sum[7:0] : 'bZ;
+    assign bus = sum[7:0];
 
     always_ff @(posedge clk or posedge rst) begin
         if (rst) begin

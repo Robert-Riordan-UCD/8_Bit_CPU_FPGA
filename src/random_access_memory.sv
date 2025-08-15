@@ -17,11 +17,16 @@ module random_access_memory (
     logic [7:0] data [16];
 
     initial begin        
-        data[0] = 8'b01011000; // LOAD IM 8
-        data[1] = 8'b11100000; // OUT
-        data[2] = 8'b01010001; // LOAD IM 1
-        data[3] = 8'b11100000; // OUT
-        data[4] = 8'b01100000; // JMP 0
+        // data[0] = 8'b01011000; // LOAD IM 8
+        // data[1] = 8'b11100000; // OUT
+        // data[2] = 8'b01010001; // LOAD IM 1
+        // data[3] = 8'b11100000; // OUT
+        // data[4] = 8'b01100000; // JMP 0
+    
+        data[0] = 8'b01010001; // LOAD IM 1
+        data[1] = 8'b00101111; // ADD 15
+        data[2] = 8'b01100000; // JMP 0
+        data[15] = 8'b00000010; // 2
     end
 
     always_ff @(posedge clk) begin

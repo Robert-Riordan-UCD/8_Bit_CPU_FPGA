@@ -21,13 +21,13 @@ class Coverage(uvm_subscriber):
     def write(self, op):
         self.logger.info("Write COV")
 
-        if op.out.value == 1 and op.jump.value == 0:
-            if not (o := intxz(op.bus)) is None:
+        if op.jump.value == 0:
+            if not (o := intxz(op.pc_out)) is None:
                 self.bus_outputs.add(intxz(o))
         
-        if op.jump == 1 and op.out == 0:
-            if not (d := intxz(op.bus_driver)) is None:
-                self.jump_input.add(intxz(d))
+        if op.jump.value == 1:
+            if not (j := intxz(op.bus)) is None:
+                self.jump_input.add(intxz(j))
         
     def report_phase(self):
         self.logger.info("Report COV")

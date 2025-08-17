@@ -23,10 +23,9 @@ class Monitor(uvm_monitor):
             op.rst = self.dut.rst
             op.inc = self.dut.inc
             op.jump = self.dut.jump
-            op.out = self.dut.out
-            op.bus_driver = self.dut.bus_driver
-            
             op.bus = self.dut.bus
+            
+            op.pc_out = self.dut.pc_out
 
             self.analysis_port.write(op)
             # self.logger.info("Run MON: Cycle monitored")

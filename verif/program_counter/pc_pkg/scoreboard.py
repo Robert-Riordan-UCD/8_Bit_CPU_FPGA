@@ -17,11 +17,10 @@ class Scoreboard(uvm_subscriber):
             self.expected_value = 0
 
         # Check value
-        if op.out == 1:
-            assert self.expected_value == op.bus, f"ERROR: expected {self.expected_value}, actual {op.bus}"
+        assert self.expected_value == op.pc_out, f"ERROR: expected {self.expected_value}, actual {op.pc_out}"
     
-        if op.jump == 1 and op.inc == 0 and op.out == 0 and op.rst == 0:
-            self.expected_value = op.bus_driver.value % 0x10
+        if op.jump == 1 and op.inc == 0 and op.rst == 0:
+            self.expected_value = op.bus.value % 0x10
         elif self.expected_value == '0000xxxx':
             return
         elif op.inc == 1 and op.jump == 0 and op.rst == 0:

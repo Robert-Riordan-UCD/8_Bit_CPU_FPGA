@@ -21,8 +21,7 @@ class Driver(uvm_driver):
             self.dut.rst.value = op.rst
             self.dut.inc.value = op.inc
             self.dut.jump.value = op.jump
-            self.dut.out.value = op.out
-            self.dut.bus_driver.value = op.bus_driver
+            self.dut.bus.value = op.bus
 
             await cocotb.triggers.FallingEdge(self.dut.clk)
 

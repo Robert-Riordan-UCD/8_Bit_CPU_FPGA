@@ -8,17 +8,16 @@ module tb_program_counter;
     logic jump;
     logic out;
 
-    logic [7:0] bus_driver;
-    tri [7:0] bus;
-    assign bus = (jump && !out) ? bus_driver : 'bz;
+    logic [7:0] bus;
+    logic [7:0] pc_out;
 
     program_counter dut (
         .clk(clk),
         .rst(rst),
         .inc(inc),
         .jump(jump),
-        .out(out),
-        .bus(bus)
+        .bus_in(bus),
+        .bus_out(pc_out)
     );
 
 endmodule

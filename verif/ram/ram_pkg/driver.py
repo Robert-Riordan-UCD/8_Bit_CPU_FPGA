@@ -19,12 +19,11 @@ class Driver(uvm_driver):
             self.logger.info("Run DRV: OP recieved")
 
             self.dut.read_from_bus.value = op.read_from_bus
-            self.dut.write_to_bus.value = op.write_to_bus
             self.dut.manual_mode.value = op.manual_mode
             self.dut.manual_read.value = op.manual_read
             self.dut.address.value = op.address
             self.dut.program_switches.value = op.program_switches
-            self.dut.bus_driver.value = op.bus_driver
+            self.dut.bus.value = op.bus
 
             await cocotb.triggers.FallingEdge(self.dut.clk)
 

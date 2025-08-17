@@ -21,14 +21,13 @@ class Monitor(uvm_monitor):
 
             op = SeqItem()
             op.read_from_bus = self.dut.read_from_bus
-            op.write_to_bus = self.dut.write_to_bus
             op.manual_mode = self.dut.manual_mode
             op.manual_read = self.dut.manual_read
             op.address = self.dut.address
             op.program_switches = self.dut.program_switches
-            op.bus_driver = self.dut.bus_driver
-            
             op.bus = self.dut.bus
+            
+            op.ram_bus_out = self.dut.ram_bus_out
 
             self.analysis_port.write(op)
             # self.logger.info("Run MON: Cycle monitored")

@@ -8,7 +8,7 @@
 | B Register              |✅|✅|✅|
 | Memory Address Register |✅|✅|✅|
 | Instruction Register    |✅|✅|✅|
-| Random Access Memory    |✅|〰️|✅|
+| Random Access Memory    |✅|✅|✅|
 | Arithmetic Logic Unit   |✅|〰️|✅|
 | Control                 |✅|✅|✅|
 | Output                  |✅|〰️|✅|

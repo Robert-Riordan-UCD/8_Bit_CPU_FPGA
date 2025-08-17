@@ -16,6 +16,7 @@ class Coverage(uvm_subscriber):
         self.logger.info("Init COV")
 
         self.address_read = set()
+        self.address_manual_read = set()
         self.address_writes = set()
         self.bus_reads = set()
         self.bus_writes = set()
@@ -25,25 +26,24 @@ class Coverage(uvm_subscriber):
         self.logger.info("Write COV")
 
         # Manual read
-        if op.manual_read.value == 1 and op.read_from_bus.value == 0 and op.write_to_bus.value == 0:
+        if op.manual_read.value == 1 and op.read_from_bus.value == 0:
             if not (a := intxz(op.address)) is None:
-                self.address_read.add(intxz(a))
+                self.address_manual_read.add(intxz(a))
             if not (p := intxz(op.program_switches)) is None:
                 self.manual_reads.add(intxz(p))
 
         # Bus read
-        if op.manual_read.value == 0 and op.read_from_bus.value == 1 and op.write_to_bus.value == 0:
+        if op.manual_read.value == 0 and op.read_from_bus.value == 1:
             if not (a := intxz(op.address)) is None:
                 self.address_read.add(intxz(a))
             if not (b := intxz(op.bus)) is None:
                 self.bus_reads.add(intxz(b))
 
         # Writes
-        if op.manual_read.value == 0 and op.read_from_bus.value == 0 and op.write_to_bus.value == 1:
-            if not (a := intxz(op.address)) is None:
-                self.address_writes.add(intxz(a))
-            if not (b := intxz(op.bus)) is None:
-                self.bus_writes.add(intxz(b))
+        if not (a := intxz(op.address)) is None:
+            self.address_writes.add(intxz(a))
+        if not (b := intxz(op.ram_bus_out)) is None:
+            self.bus_writes.add(intxz(b))
 
         
     def report_phase(self):
@@ -51,11 +51,19 @@ class Coverage(uvm_subscriber):
         
         addr_read_cov = len(self.address_read)/0x10
         if addr_read_cov == 1:
-            self.logger.info(f"Coverage: All address values read")
+            self.logger.info(f"Coverage: All address values read from bus")
         elif addr_read_cov > 0.8:
-            self.logger.warning(f"Coverage MISS: {100*addr_read_cov:0.1f}% address read covered ({len(self.address_read)}/{0x10})")
+            self.logger.warning(f"Coverage MISS: {100*addr_read_cov:0.1f}% address read from bus covered ({len(self.address_read)}/{0x10})")
         else:
-            self.logger.error(f"Coverage MISS: {100*addr_read_cov:0.1f}% address read covered ({len(self.address_read)}/{0x10})")            
+            self.logger.error(f"Coverage MISS: {100*addr_read_cov:0.1f}% address read from bus covered ({len(self.address_read)}/{0x10})")            
+
+        addr_read_cov = len(self.address_manual_read)/0x10
+        if addr_read_cov == 1:
+            self.logger.info(f"Coverage: All address values read from switches")
+        elif addr_read_cov > 0.8:
+            self.logger.warning(f"Coverage MISS: {100*addr_read_cov:0.1f}% address read from switches covered ({len(self.address_read)}/{0x10})")
+        else:
+            self.logger.error(f"Coverage MISS: {100*addr_read_cov:0.1f}% address read from switches covered ({len(self.address_read)}/{0x10})")            
 
         addr_write_cov = len(self.address_writes)/0x10
         if addr_write_cov == 1:

@@ -21,7 +21,6 @@ class Driver(uvm_driver):
             self.dut.rst.value = op.rst
             self.dut.a.value = op.a
             self.dut.b.value = op.b
-            self.dut.out.value = op.out
             self.dut.subtract.value = op.subtract
             self.dut.flags_in.value = op.flags_in
 

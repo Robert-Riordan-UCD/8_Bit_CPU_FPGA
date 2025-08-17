@@ -11,7 +11,7 @@ class Scoreboard(uvm_subscriber):
     def write(self, op):
         self.logger.info("Write SCB")
         result = op.a.value - op.b.value if op.subtract.value == 1 else op.a.value + op.b.value
-        expected_bus = result % 0x100 if op.out.value == 1 else BinaryValue(value="zzzzzzzz", n_bits=8)
+        expected_bus = result % 0x100
 
         if op.rst.value == 1:
             self.expected_carry = 0

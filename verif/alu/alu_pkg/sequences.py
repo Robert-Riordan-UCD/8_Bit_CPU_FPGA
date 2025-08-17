@@ -7,13 +7,11 @@ class TestAllSeq(uvm_sequence):
     async def body(self):
         carry = CarryFlag("carry flag")
         zero = ZeroFlag("zero flag")
-        out = Out("out")
         edga = EdgeCases("edge cases")
         random = Random("random")
 
         await carry.start(self.sequencer)
         await zero.start(self.sequencer)
-        await out.start(self.sequencer)
         await edga.start(self.sequencer)
         await random.start(self.sequencer)
 
@@ -56,40 +54,26 @@ class ZeroFlag(uvm_sequence):
             await self.finish_item(rst)
 
 """
-    Set and unset out singal
-"""
-class Out(uvm_sequence):
-    async def body(self):
-        seqs = [
-            SeqItem(name="out set", a=0x12, b=0x34, out=1),
-            SeqItem(name="out not set", a=0x12, b=0x34),
-        ]
-
-        for seq in seqs:
-            await self.start_item(seq)
-            await self.finish_item(seq)
-
-"""
     Cases with A, B, or BUS at 0 or 0xFF
 """
 class EdgeCases(uvm_sequence):
     async def body(self):
         seqs = [
-            SeqItem(name="a=0 b=0", a=0, b=0, out=1, flags_in=1),
-            SeqItem(name="a=0xFF b=0", a=0xFF, b=0, out=1, flags_in=1),
-            SeqItem(name="a=0 b=0xFF", a=0, b=0xFF, out=1, flags_in=1),
-            SeqItem(name="a=0xFF b=0xFF", a=0xFF, b=0xFF, out=1, flags_in=1),
+            SeqItem(name="a=0 b=0", a=0, b=0, flags_in=1),
+            SeqItem(name="a=0xFF b=0", a=0xFF, b=0, flags_in=1),
+            SeqItem(name="a=0 b=0xFF", a=0, b=0xFF, flags_in=1),
+            SeqItem(name="a=0xFF b=0xFF", a=0xFF, b=0xFF, flags_in=1),
             
-            SeqItem(name="subtract a=0 b=0", a=0, b=0, out=1, flags_in=1, subtract=1),
-            SeqItem(name="subtract a=0xFF b=0", a=0xFF, b=0, out=1, flags_in=1, subtract=1),
-            SeqItem(name="subtract a=0 b=0xFF", a=0, b=0xFF, out=1, flags_in=1, subtract=1),
-            SeqItem(name="subtract a=0xFF b=0xFF", a=0xFF, b=0xFF, out=1, flags_in=1, subtract=1),
+            SeqItem(name="subtract a=0 b=0", a=0, b=0, flags_in=1, subtract=1),
+            SeqItem(name="subtract a=0xFF b=0", a=0xFF, b=0, flags_in=1, subtract=1),
+            SeqItem(name="subtract a=0 b=0xFF", a=0, b=0xFF, flags_in=1, subtract=1),
+            SeqItem(name="subtract a=0xFF b=0xFF", a=0xFF, b=0xFF, flags_in=1, subtract=1),
             
-            SeqItem(name="bus=0", a=0, b=0, out=1, flags_in=1),
-            SeqItem(name="bus=0xFF", a=0xF0, b=0x0F, out=1, flags_in=1),
+            SeqItem(name="bus=0", a=0, b=0, flags_in=1),
+            SeqItem(name="bus=0xFF", a=0xF0, b=0x0F, flags_in=1),
             
-            SeqItem(name="subtract bus=0", a=1, b=1, out=1, flags_in=1, subtract=1),
-            SeqItem(name="subtract bus=0xFF", a=0, b=1, out=1, flags_in=1, subtract=1),
+            SeqItem(name="subtract bus=0", a=1, b=1, flags_in=1, subtract=1),
+            SeqItem(name="subtract bus=0xFF", a=0, b=1, flags_in=1, subtract=1),
         ]
 
         for seq in seqs:
@@ -104,11 +88,8 @@ class Random(uvm_sequence):
             op.a = randint(0, 0xFF)
             op.b = randint(0, 0xFF)
             op.subtract = randint(0, 1)
-            op.out = randint(0, 1)
             op.flags_in = randint(0, 1)
 
         for op in ops:
             await self.start_item(op)
             await self.finish_item(op)
-
-# class EdgeCases: pass

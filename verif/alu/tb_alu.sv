@@ -4,7 +4,6 @@ module tb_alu;
     always #1 clk = ~clk;
 
     logic rst;
-    logic out;
     logic subtract;
     logic flags_in;
 
@@ -18,7 +17,6 @@ module tb_alu;
     alu dut (
         .clk(clk),
         .rst(rst),
-        .out(out),
         .subtract(subtract),
         .flags_in(flags_in),
         .carry(carry),

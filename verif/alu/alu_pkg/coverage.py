@@ -16,7 +16,6 @@ class Coverage(uvm_subscriber):
         self.logger.info("Init COV")
 
         self.operations = {}
-        self.out = {0: 0, 1: 0}
         self.flags_in = {0: 0, 1: 0}
         self.reset = {0: 0, 1: 0}
 
@@ -32,7 +31,6 @@ class Coverage(uvm_subscriber):
         self.logger.info("Write COV")
         
         self.operations[int(op.subtract)] = self.operations.get(int(op.subtract), 0) + 1
-        self.out[int(op.out)] = self.out.get(int(op.out), 0) + 1
         self.flags_in[int(op.flags_in)] = self.flags_in.get(int(op.flags_in), 0) + 1
         self.reset[int(op.rst)] = self.reset.get(int(op.rst), 0) + 1
 
@@ -69,13 +67,6 @@ class Coverage(uvm_subscriber):
                 self.logger.error(f"Coverage MISS: {"SUBTRACT" if op else "ADD"} never reached")
         else:
             self.logger.info("All operation hit")
-
-        # Check for output enabled and disabled
-        for en in self.out:
-            if self.out[en]:
-                self.logger.info(f"Output {"enabled" if en else "disabled"} {self.out[en]} times")
-            else:
-                self.logger.error(f"Coverage MISS: Output {"enabled" if en else "disabled"} never reached")
 
         # Check for flags enabled and disabled
         for en in self.flags_in:
@@ -141,5 +132,3 @@ class Coverage(uvm_subscriber):
         # Check bus edge cases
         if not 0 in self.bus: self.logger.error(f"BUS coverage edge case: BUS never set to 0")
         if not 0xFF in self.bus: self.logger.error(f"BUS coverage edge case: BUS never set to 0xFF")
-        if not self.bus_z: self.logger.error("BUS coverage edge case: BUS never set to 0xZZ")
-        else: self.logger.info(f"BUS set to 0xZZ {self.bus_z} times")

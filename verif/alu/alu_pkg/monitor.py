@@ -23,7 +23,6 @@ class Monitor(uvm_monitor):
             op.rst = self.dut.rst
             op.a = self.dut.a
             op.b = self.dut.b
-            op.out = self.dut.out
             op.subtract = self.dut.subtract
             op.flags_in = self.dut.flags_in
 

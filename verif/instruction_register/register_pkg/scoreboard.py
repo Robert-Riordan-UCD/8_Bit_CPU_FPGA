@@ -17,9 +17,9 @@ class Scoreboard(uvm_subscriber):
         assert self.expected_value == op.value, f"ERROR value: expected {self.expected_value}, actual {op.value}"
     
         # Check bus
-        if op.write_to_bus == 1 and op.read_from_bus == 0 and op.rst == 0:
-            assert op.bus == self.expected_value % 0x10, f"ERROR bus: expected {self.expected_value % 0x10}, actual {op.bus}"
+        if self.expected_value is int:
+            assert op.reg_bus_out == self.expected_value, f"ERROR bus: expected {self.expected_value}, actual {op.reg_bus_out}"
 
-        if op.read_from_bus == 1 and op.write_to_bus == 0 and op.rst == 0:
-            self.expected_value = op.bus_driver.value
+        if op.read_from_bus == 1 and op.rst == 0:
+            self.expected_value = op.bus.value
     

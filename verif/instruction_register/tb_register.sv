@@ -9,16 +9,15 @@ module tb_register;
     
     logic [7:0] value;
 
-    logic [7:0] bus_driver;
-    tri [7:0] bus;
-    assign bus = (!write_to_bus && read_from_bus) ? bus_driver : 'bz;
+    logic [7:0] bus;
+    logic [7:0] reg_bus_out;
 
     register #(8'h0F) dut (
         .clk(clk),
         .rst(rst),
         .read_from_bus(read_from_bus),
-        .write_to_bus(write_to_bus),
-        .bus(bus),
+        .bus_in(bus),
+        .bus_out(reg_bus_out),
         .value(value)
     );
 

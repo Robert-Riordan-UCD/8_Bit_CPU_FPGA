@@ -19,13 +19,9 @@ class TestAllSeq(uvm_sequence):
 class AllOperations(uvm_sequence):
     async def body(self):
         seqs = [
-            SeqItem(name="read", bus_driver=0xAB, read_from_bus=1),
-            SeqItem(name="write", write_to_bus=1),
+            SeqItem(name="read", bus=0xAB, read_from_bus=1),
             SeqItem(name="rst", rst=1),
-            SeqItem(name="read & write", bus_driver=0xAB, read_from_bus=1, write_to_bus=1),
-            SeqItem(name="read & rst", bus_driver=0xAB, read_from_bus=1, rst=1),
-            SeqItem(name="write & rst", write_to_bus=1, rst=1),
-            SeqItem(name="read & write & rst", bus_driver=0xAB, read_from_bus=1, write_to_bus=1, rst=1),
+            SeqItem(name="read & rst", bus=0xAB, read_from_bus=1, rst=1),
             SeqItem(name="noop"),
         ]
 
@@ -40,10 +36,8 @@ class AllOperations(uvm_sequence):
 class EdgeCases(uvm_sequence):
     async def body(self):
         seqs = [
-            SeqItem(name="read 0", bus_driver=0, read_from_bus=1),
-            SeqItem(name="write 0", write_to_bus=1),
-            SeqItem(name="read 0xFF", bus_driver=0xFF, read_from_bus=1),
-            SeqItem(name="write 0xFF", write_to_bus=1),
+            SeqItem(name="read 0", bus=0, read_from_bus=1),
+            SeqItem(name="read 0xFF", bus=0xFF, read_from_bus=1),
         ]
 
         for seq in seqs:
@@ -56,8 +50,7 @@ class Random(uvm_sequence):
         for op in ops:
             op.rst = 1 if randint(0, 10) == 0 else 0 # Reset 1 in every 10 cycles randomly
             op.read_from_bus = randint(0, 1)
-            op.write_to_bus = randint(0, 1)
-            op.bus_driver = randint(0, 0xFF)
+            op.bus = randint(0, 0xFF)
 
         for op in ops:
             await self.start_item(op)

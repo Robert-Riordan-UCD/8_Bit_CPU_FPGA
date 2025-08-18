@@ -68,7 +68,7 @@ module display (
             13: to_segments =      `B | `C | `D | `E      | `G; // d
             14: to_segments = `A           | `D | `E | `F | `G; // E
             15: to_segments = `A                | `E | `F | `G; // F
-            default: bcd_to_segments = 8'b0;
+            default: to_segments = 8'b0;
         endcase
     endfunction
 

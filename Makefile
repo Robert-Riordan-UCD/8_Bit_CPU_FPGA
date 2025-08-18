@@ -19,10 +19,10 @@ bitstream:
 	gowin_pack -d GW1N-9C -o ./build/bitstream.fs ./build/pnr.json
 
 upload:
-        openFPGALoader -b tangnano9k bitstream.fs
+	openFPGALoader -b tangnano9k bitstream.fs
 
 upload-flash:
-        openFPGALoader -b tangnano9k -f bitstream.fs
+	openFPGALoader -b tangnano9k -f bitstream.fs
 
 push-to-pi:
 	scp ./build/bitstream.fs ${PI_USERNAME}@${PI_IP_ADDRESS}:${PI_DIR}/bitstream.fs

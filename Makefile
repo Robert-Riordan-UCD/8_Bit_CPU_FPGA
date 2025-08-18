@@ -18,15 +18,15 @@ pnr:
 bitstream:
 	gowin_pack -d GW1N-9C -o ./build/bitstream.fs ./build/pnr.json
 
+upload:
+        openFPGALoader -b tangnano9k bitstream.fs
+
+upload-flash:
+        openFPGALoader -b tangnano9k -f bitstream.fs
+
 push-to-pi:
 	scp ./build/bitstream.fs ${PI_USERNAME}@${PI_IP_ADDRESS}:${PI_DIR}/bitstream.fs
 	(echo cd ${PI_DIR}; echo pwd; echo make) | ssh ${PI_USERNAME}@${PI_IP_ADDRESS}
-
-# test:
-# 	cd verif/; make
-
-# waves:
-# 	cd verif/; make waves
 
 clean:
 	rm -rf build/

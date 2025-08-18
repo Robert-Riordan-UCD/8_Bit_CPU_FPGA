@@ -4,6 +4,9 @@ This is an 8-bit CPU design running on a Tang Nano 9k FPGA. The CPU design is ba
 
 The CPU is made of 11 modules, which are designed in SystemVerilog and verified using [pyuvm](https://github.com/pyuvm/pyuvm).
 
+This is a gif of the CPU calculating the fibonacci sequence and displaying it (in hexadecimal).
+![Video of the CPU calculating the fibonacci sequence](fib.gif)
+
 # Getting Started
 
 This project is not fully complete yet and is currently only tested on my personal laptop and raspberry pi. However, this is the current process. (I am developing on Ubuntu 24 and used [this](https://www.geeklan.co.uk/?p=2919) guide to get up and running using an open source toolchain)

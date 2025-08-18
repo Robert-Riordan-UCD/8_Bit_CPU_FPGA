@@ -57,11 +57,9 @@ make
 | Random Access Memory    |✅|✅|✅|
 | Arithmetic Logic Unit   |✅|✅|✅|
 | Control                 |✅|✅|✅|
-| Output                  |✅|〰️|✅|
+| Output                  |✅|✅|✅|
 | Bus                     |✅|✅|✅|
 ||||
 | Top                     |✅|❌|✅|
-
-I had to redesign the bus to avoid tristate logic, so all modules that write to the bus need to be re-verified. But it's working on the FPGA right now!
 
 The output is currently in hexadecimal, because there was not enough LUTs on the Tang Nano 9k to implement a naive approach to decimal conversion using division. I will hopefully update this to a better approach soon.

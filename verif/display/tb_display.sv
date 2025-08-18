@@ -1,5 +1,3 @@
-`define WAIT_TIME 16
-
 module tb_display;
     
     logic sys_clk=0;

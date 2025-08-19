@@ -42,6 +42,7 @@ class Coverage(uvm_subscriber):
         self.alu_subtract = set()
         self.alu_flags_in = set()
         self.out_en = set()
+        self.boot_write_to_bus = set()
 
     def write(self, op):
         self.logger.info("Write COV")
@@ -86,6 +87,7 @@ class Coverage(uvm_subscriber):
         self.alu_subtract.add(int(op.alu_subtract.value))
         self.alu_flags_in.add(int(op.alu_flags_in.value))
         self.out_en.add(int(op.out_en.value))
+        self.boot_write_to_bus.add(int(op.boot_write_to_bus.value))
 
     def report_phase(self):
         self.logger.info("Report COV")
@@ -152,3 +154,6 @@ class Coverage(uvm_subscriber):
         
         assert 0 in self.out_en, "OUT EN never 0"
         assert 1 in self.out_en, "OUT EN never 1"
+
+        assert 0 in self.boot_write_to_bus, "BOOT WRITE TO BUS never 0"
+        assert 1 in self.boot_write_to_bus, "BOOT WRITE TO BUS never 1"

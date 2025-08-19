@@ -18,3 +18,4 @@ class Signal(Enum):
     ALU_SUB=14
     ALU_FLG=15
     OUT_EN=16
+    BOOT=17

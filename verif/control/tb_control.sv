@@ -8,6 +8,8 @@ module tb_control;
     logic [3:0] instruction;
     logic alu_carry;
     logic alu_zero;
+    logic bootload_address;
+    logic bootload_ram;
 
     logic clk_halt;
     logic pc_inc;
@@ -26,6 +28,7 @@ module tb_control;
     logic alu_subtract;
     logic alu_flags_in;
     logic out_en;
+    logic boot_write_to_bus;
 
     control dut (
         .clk(clk),
@@ -33,6 +36,8 @@ module tb_control;
         .instruction(instruction),
         .alu_carry(alu_carry),
         .alu_zero(alu_zero),
+        .bootload_address(bootload_address),
+        .bootload_ram(bootload_ram),
         .clk_halt(clk_halt),
         .pc_inc(pc_inc),
         .pc_jump(pc_jump),
@@ -49,7 +54,8 @@ module tb_control;
         .alu_out(alu_out),
         .alu_subtract(alu_subtract),
         .alu_flags_in(alu_flags_in),
-        .out_en(out_en)
+        .out_en(out_en),
+        .boot_write_to_bus(boot_write_to_bus)
     );
 
 endmodule

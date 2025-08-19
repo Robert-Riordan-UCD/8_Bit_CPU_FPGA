@@ -20,13 +20,8 @@ class Driver(uvm_driver):
             self.logger.info("Run DRV: OP recieved")
 
             self.dut.rst.value = op.rst
-            self.dut.instruction.value = op.instruction
-            self.dut.alu_carry.value = op.alu_carry
-            self.dut.alu_zero.value = op.alu_zero
-            self.dut.bootload_address = op.bootload_address
-            self.dut.bootload_ram = op.bootload_ram
-
-            self.monitor.expected_output = op.expected_output
+            self.dut.program_select.value = op.program_select
+            self.dut.enable_bootload = op.enable_bootload
 
             await cocotb.triggers.FallingEdge(self.dut.clk)
 

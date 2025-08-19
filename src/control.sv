@@ -1,32 +1,21 @@
-// OP Codes
-`define LOADA   4'b0001
-`define ADD     4'b0010
-`define SUB     4'b0011
-`define STOREA  4'b0100
-`define LOAD_IM 4'b0101
-`define JUMP    4'b0110
-`define JUMPC   4'b0111
-`define JUMPZ   4'b1000
-`define OUT     4'b1110
-`define HALT    4'b1111
-
-`define CLK_HLT   17'b00000000000000001
-`define PC_OUT    17'b00000000000000010
-`define PC_INC    17'b00000000000000100
-`define PC_JUMP   17'b00000000000001000
-`define A_READ    17'b00000000000010000
-`define A_WRITE   17'b00000000000100000
-`define B_READ    17'b00000000001000000
-`define B_WRITE   17'b00000000010000000
-`define I_READ    17'b00000000100000000
-`define I_WRITE   17'b00000001000000000
-`define MAR_READ  17'b00000010000000000
-`define RAM_READ  17'b00000100000000000
-`define RAM_WRITE 17'b00001000000000000
-`define ALU_OUT   17'b00010000000000000
-`define ALU_SUB   17'b00100000000000000
-`define ALU_FLAGS 17'b01000000000000000
-`define OUT_EN    17'b10000000000000000
+`define CLK_HLT   18'b000000000000000001
+`define PC_OUT    18'b000000000000000010
+`define PC_INC    18'b000000000000000100
+`define PC_JUMP   18'b000000000000001000
+`define A_READ    18'b000000000000010000
+`define A_WRITE   18'b000000000000100000
+`define B_READ    18'b000000000001000000
+`define B_WRITE   18'b000000000010000000
+`define I_READ    18'b000000000100000000
+`define I_WRITE   18'b000000001000000000
+`define MAR_READ  18'b000000010000000000
+`define RAM_READ  18'b000000100000000000
+`define RAM_WRITE 18'b000001000000000000
+`define ALU_OUT   18'b000010000000000000
+`define ALU_SUB   18'b000100000000000000
+`define ALU_FLAGS 18'b001000000000000000
+`define OUT_EN    18'b010000000000000000
+`define BOOT_OUT  18'b100000000000000000
 
 module control (
     input clk,
@@ -36,6 +25,9 @@ module control (
 
     input alu_carry,
     input alu_zero,
+
+    input bootload_address,
+    input bootload_ram,
 
     output clk_halt,
     
@@ -61,11 +53,14 @@ module control (
     output alu_subtract,
     output alu_flags_in,
 
-    output out_en
+    output out_en,
+
+    output boot_write_to_bus
 );
 
-    logic [16:0] control_signals;
+    logic [17:0] control_signals;
     assign {
+        boot_write_to_bus,
         out_en,
         alu_flags_in,
         alu_subtract,
@@ -211,19 +206,27 @@ module control (
     endtask
 
     always_comb begin
-        case (instruction)
-            `LOADA:   load_a(step_counter);
-            `ADD:     add(step_counter);
-            `SUB:     sub(step_counter);
-            `STOREA:  store_a(step_counter);
-            `LOAD_IM: load_imediate(step_counter);
-            `JUMP:    jump(step_counter);
-            `JUMPC:   jump_carry(step_counter);
-            `JUMPZ:   jump_zero(step_counter);
-            `OUT:     output_en(step_counter);
-            `HALT:    halt(step_counter);
-            default:  fetch(step_counter);
-        endcase
+        if (bootload_address & bootload_ram) begin
+            control_signals = 0;
+        end else if (bootload_address) begin
+            control_signals = `BOOT_OUT | `MAR_READ;
+        end else if (bootload_ram) begin
+            control_signals = `BOOT_OUT | `RAM_READ;
+        end else begin
+            case (instruction)
+                `LOAD_A:  load_a(step_counter);
+                `ADD:     add(step_counter);
+                `SUB:     sub(step_counter);
+                `STORE_A: store_a(step_counter);
+                `LOAD_IM: load_imediate(step_counter);
+                `JUMP:    jump(step_counter);
+                `JUMPC:   jump_carry(step_counter);
+                `JUMPZ:   jump_zero(step_counter);
+                `OUT:     output_en(step_counter);
+                `HALT:    halt(step_counter);
+                default:  fetch(step_counter);
+            endcase
+        end
     end
 
 endmodule

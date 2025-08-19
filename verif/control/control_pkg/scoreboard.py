@@ -61,4 +61,7 @@ class Scoreboard(uvm_subscriber):
         else:                                    assert op.alu_flags_in == 0, f"ERROR: unexpected ALU FLAGS IN"
 
         if Signal.OUT_EN in op.expected_output:  assert op.out_en == 1, f"ERROR: expceted OUTPUT EN"
-        else:                                    assert op.out_en == 0, f"ERROR: unexpected A OUTPUT EN"
+        else:                                    assert op.out_en == 0, f"ERROR: unexpected OUTPUT EN"
+
+        if Signal.BOOT in op.expected_output:    assert op.boot_write_to_bus == 1, f"ERROR: expceted BOOT WRITE TO BUS"
+        else:                                    assert op.boot_write_to_bus == 0, f"ERROR: unexpected BOOT WRITE TO BUS"

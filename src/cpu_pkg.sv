@@ -1,0 +1,13 @@
+package cpu_pkg;
+    `define NOOP    4'b0000
+    `define LOAD_A  4'b0001
+    `define ADD     4'b0010
+    `define SUB     4'b0011
+    `define STORE_A 4'b0100
+    `define LOAD_IM 4'b0101
+    `define JUMP    4'b0110
+    `define JUMPC   4'b0111
+    `define JUMPZ   4'b1000
+    `define OUT     4'b1110
+    `define HALT    4'b1111
+endpackage

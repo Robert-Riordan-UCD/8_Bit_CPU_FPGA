@@ -20,6 +20,7 @@ class TestAllSeq(uvm_sequence):
         jump_zero_set = JumpZeroWithZero("jump zero set")
         out = Out("out")
         halt = Halt("halt")
+        bootload = Bootload("bootload")
         random_instructions = RandomInstructions("random instructions")
 
         await reset.start(self.sequencer)
@@ -35,6 +36,8 @@ class TestAllSeq(uvm_sequence):
         await jump_zero_set.start(self.sequencer)
         await out.start(self.sequencer)
         await halt.start(self.sequencer)
+        await bootload.start(self.sequencer)
+        await reset.start(self.sequencer)
         await random_instructions.start(self.sequencer)
 
 class Reset(uvm_sequence):
@@ -267,6 +270,19 @@ class Noop(uvm_sequence):
         for seq in seqs:
             await self.start_item(seq)
             await self.finish_item(seq)
+
+class Bootload(uvm_sequence):
+    async def body(self):
+        prev_ins = randint(0, 0xF)
+        for _ in range(16):
+            seq = SeqItem(name="boot", instruction=prev_ins, bootload_address=1, expected_output=[Signal.BOOT, Signal.MAR_RD])
+            await self.start_item(seq)
+            await self.finish_item(seq)
+
+            seq = SeqItem(name="boot", instruction=prev_ins, bootload_ram=1, expected_output=[Signal.BOOT, Signal.RAM_RD])
+            await self.start_item(seq)
+            await self.finish_item(seq)
+
 
 class RandomInstructions(uvm_sequence):
     async def body(self):

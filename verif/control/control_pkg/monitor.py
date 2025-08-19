@@ -25,6 +25,8 @@ class Monitor(uvm_monitor):
             op.instruction = self.dut.instruction
             op.alu_carry = self.dut.alu_carry
             op.alu_zero = self.dut.alu_zero
+            op.bootload_address = self.dut.bootload_address
+            op.bootload_ram = self.dut.bootload_ram
             
             op.clk_halt = self.dut.clk_halt
             op.pc_inc = self.dut.pc_inc
@@ -43,6 +45,7 @@ class Monitor(uvm_monitor):
             op.alu_subtract = self.dut.alu_subtract
             op.alu_flags_in = self.dut.alu_flags_in
             op.out_en = self.dut.out_en
+            op.boot_write_to_bus = self.dut.boot_write_to_bus
             
             op.expected_output = self.expected_output
 

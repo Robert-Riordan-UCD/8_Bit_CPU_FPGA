@@ -1,4 +1,4 @@
-DUT ?= control
+DUT ?= bootloader
 TOPLEVEL_LANG = verilog
 VERILOG_SOURCES = ../../src/cpu_pkg.sv ../../src/$(DUT).sv ./tb_$(DUT).sv
 TOPLEVEL = tb_$(DUT)

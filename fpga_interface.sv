@@ -1,3 +1,5 @@
+`include "src/cpu_pkg.sv"
+
 `include "src/alu.sv"
 `include "src/bus.sv"
 `include "src/clock.sv"
@@ -8,6 +10,7 @@
 `include "src/random_access_memory.sv"
 `include "src/register.sv"
 `include "src/top.sv"
+`include "src/bootloader.sv"
 
 module fpga_interface (
     /* Onboard signals */
@@ -22,6 +25,7 @@ module fpga_interface (
     /* RAM programming */
     input logic ram_mode,
     input logic ram_pulse,
+    input logic [7:0] ram_switches,
     input logic [3:0] mar_switches,
 
     /* Display */
@@ -40,6 +44,8 @@ module fpga_interface (
     /* Control signals */
     logic alu_carry;
     logic alu_zero;
+    logic bootload_address;
+    logic bootload_ram;
     logic clk_halt;
     logic pc_inc;
     logic pc_jump;
@@ -57,6 +63,7 @@ module fpga_interface (
     logic alu_subtract;
     logic alu_flags_in;
     logic out_en;
+    logic boot_write_to_bus;
 
     /* Buses */
     logic [7:0] pc_bus_out;
@@ -65,6 +72,7 @@ module fpga_interface (
     logic [7:0] a_bus_out;
     logic [7:0] b_bus_out;
     logic [7:0] alu_bus_out;
+    logic [7:0] boot_bus_out;
     
     /* Other data */
     logic [3:0] memory_address;
@@ -116,7 +124,7 @@ module fpga_interface (
         .manual_mode(ram_mode),
         .manual_read(ram_pulse),
         .address(memory_address),
-        .program_switches(program_switches),
+        .program_switches(ram_switches),
         .bus_in(bus_data),
         .bus_out(ram_bus_out)
     );
@@ -171,6 +179,8 @@ module fpga_interface (
         .instruction(instruction[7:4]),
         .alu_carry(alu_carry),
         .alu_zero(alu_zero),
+        .bootload_address(bootload_address),
+        .bootload_ram(bootload_ram),
         .clk_halt(clk_halt),
         .pc_inc(pc_inc),
         .pc_jump(pc_jump),
@@ -187,7 +197,8 @@ module fpga_interface (
         .alu_out(alu_out),
         .alu_subtract(alu_subtract),
         .alu_flags_in(alu_flags_in),
-        .out_en(out_en)
+        .out_en(out_en),
+        .boot_write_to_bus(boot_write_to_bus)
     );
 
     /* Display */
@@ -204,15 +215,25 @@ module fpga_interface (
         .digit(digit)
     );
 
-
+    /* Bootloader */
+    bootloader u_bootloader(
+        .clk(cpu_clk),
+        .rst(rst),
+        .program_select(2'b01),
+        .enable_bootload(1'b1),
+        .data(boot_bus_out),
+        .bootload_address(bootload_address),
+        .bootload_ram(bootload_ram)
+    );
 
     /* Bus */
-    localparam LANES = 6;
+    localparam LANES = 7;
     localparam BUS_WIDTH = 8;
     logic [LANES-1:0] lane_select;
     logic [LANES*BUS_WIDTH-1:0] lane_data;
 
     assign lane_select = {
+        boot_write_to_bus,
         alu_out,
         b_reg_write_to_bus,
         a_reg_write_to_bus,
@@ -222,6 +243,7 @@ module fpga_interface (
     };
 
     assign lane_data = {
+        boot_bus_out,
         alu_bus_out,
         b_bus_out,
         a_bus_out,

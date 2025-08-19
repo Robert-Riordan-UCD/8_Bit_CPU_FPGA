@@ -38,10 +38,10 @@ module bootloader (
 
         /* Count in 1s */
         // Program
-        programs[0][0] = {`LOAD_A, 4'b0000};
-        programs[0][1] = {`ADD,    4'b1111};
-        programs[0][2] = {`OUT,    4'b0000};
-        programs[0][3] = {`JUMP,   4'b0001};
+        programs[0][0] = {`LOAD_IM, 4'b0000};
+        programs[0][1] = {`ADD,     4'b1111};
+        programs[0][2] = {`OUT,     4'b0000};
+        programs[0][3] = {`JUMP,    4'b0001};
         // Data
         programs[0][15] =    {8'b00000001};
 
@@ -51,11 +51,11 @@ module bootloader (
         programs[1][1] = {`ADD,     4'b1111};
         programs[1][2] = {`JUMPC,   4'b1010};
         programs[1][3] = {`OUT,     4'b0000};
-        programs[1][4] = {`STORE_A,  4'b1101};
+        programs[1][4] = {`STORE_A, 4'b1101};
         programs[1][5] = {`LOAD_A,  4'b1110};
-        programs[1][6] = {`STORE_A,  4'b1111};
+        programs[1][6] = {`STORE_A, 4'b1111};
         programs[1][7] = {`LOAD_A,  4'b1101};
-        programs[1][8] = {`STORE_A,  4'b1110};
+        programs[1][8] = {`STORE_A, 4'b1110};
         programs[1][9] = {`JUMP,    4'b0001};
         programs[1][10]= {`HALT,    4'b0000};
         // Data
@@ -74,7 +74,7 @@ module bootloader (
     end
 
     always_comb begin
-        if (enable_bootload & ~complete) begin
+        if (enable_bootload & ~complete & ~rst) begin
             bootload_address = ~addr_or_ram;
             bootload_ram = addr_or_ram; 
         end else begin

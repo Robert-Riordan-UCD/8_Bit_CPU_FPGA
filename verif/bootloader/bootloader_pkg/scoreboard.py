@@ -5,59 +5,79 @@ class Scoreboard(uvm_subscriber):
     def __init__(self, parent, name="scoreboard"):
         super().__init__(name, parent)
         self.logger.info("Init SCB")
+        self.expect_boot_addr = 0
+        self.expect_boot_ram = 0
+        self.cycle_count = 0
+        self.expected_data = [[None for i in range(17)] for j in range(4)]
+
+        with open('bootloader_expected_data.csv', 'r') as fin:
+            fin.readline()
+            for line in fin:
+                prog, addr, ins, data = line.split(',')
+                try:
+                    data = int(data)
+                except ValueError:
+                    data = None
+                self.expected_data[int(prog)][int(addr)] = [ins.strip(), data]
+
     
     def write(self, op):
         self.logger.info("Write SCB")
 
-        if op.rst == 1: return
+        if op.rst == 1:
+            self.cycle_count = 0
+            self.expect_boot_addr = 0
+            self.expect_boot_ram = 0
+        
+        if op.enable_bootload == 0:
+            self.expect_boot_addr = 0
+            self.expect_boot_ram = 0
 
-        # if Signal.CLK_HLT in op.expected_output: assert op.clk_halt == 1, f"ERROR: expceted HALT"
-        # else:                                    assert op.clk_halt == 0, f"ERROR: unexpected HALT"
+        assert op.bootload_address == self.expect_boot_addr, f"ERROR Bootload address mismatch: Expected {self.expect_boot_addr}, Actual {op.bootload_address}"
+        assert op.bootload_ram == self.expect_boot_ram, f"ERROR Bootload ram mismatch: Expected {self.expect_boot_addr}, Actual {op.bootload_address}"
 
-        # if Signal.PC_OUT in op.expected_output:  assert op.pc_out == 1, f"ERROR: expceted PC OUT"
-        # else:                                    assert op.pc_out == 0, f"ERROR: unexpected PC OUT"
+        if op.bootload_address == 1:
+            assert op.data == self.cycle_count//2, f"ERROR Expected address output on data: Expected {self.cycle_count//2}, Actual {op.data}"
+        
+        if op.bootload_ram == 1:
+            op_code, data = self._get_expected_data(op.program_select, (self.cycle_count-1)/2)
+            
+            if not op_code == None and not data == None: # Instruction with data
+                assert op_code*16 + data == op.data, f"ERROR Data mismatch: Expected {op_code*16 + data:08b}, Actual {int(op.data):08b}"
+            elif not op_code == None and data == None: # Instruction without data
+                assert op_code == op.data.value//16, f"ERROR Data mismatch: Expected {op_code:04b}????, Actual {int(op.data):08b}"
+            elif op_code == None and not data == None: # Data
+                assert data == op.data, f"ERROR Data mismatch: Expected {data:08b}, Actual {int(op.data):08b}"
 
-        # if Signal.PC_INC in op.expected_output:  assert op.pc_inc == 1, f"ERROR: expceted PC INC"
-        # else:                                    assert op.pc_inc == 0, f"ERROR: unexpected PC INC"
 
-        # if Signal.PC_JMP in op.expected_output:  assert op.pc_jump == 1, f"ERROR: expceted JUMP"
-        # else:                                    assert op.pc_jump == 0, f"ERROR: unexpected JUMP"
+        self.expect_boot_addr = (self.cycle_count+1) % 2
+        self.expect_boot_ram = self.cycle_count % 2
 
-        # if Signal.A_RD in op.expected_output:    assert op.a_reg_read_from_bus == 1, f"ERROR: expceted A READ"
-        # else:                                    assert op.a_reg_read_from_bus == 0, f"ERROR: unexpected A READ"
+        self.cycle_count += 1
 
-        # if Signal.A_WRT in op.expected_output:   assert op.a_reg_write_to_bus == 1, f"ERROR: expceted A WRITE"
-        # else:                                    assert op.a_reg_write_to_bus == 0, f"ERROR: unexpected A WRITE"
+        if self.cycle_count > 32:
+            self.expect_boot_addr = 0
+            self.expect_boot_ram = 0
 
-        # if Signal.B_RD in op.expected_output:    assert op.b_reg_read_from_bus == 1, f"ERROR: expceted B READ"
-        # else:                                    assert op.b_reg_read_from_bus == 0, f"ERROR: unexpected B READ"
+    def _get_expected_data(self, prog, addr):
+        ins = self.expected_data[int(prog)][int(addr)]
+        if ins == None: return (None, None)
 
-        # if Signal.B_WRT in op.expected_output:   assert op.b_reg_write_to_bus == 1, f"ERROR: expceted B WRITE"
-        # else:                                    assert op.b_reg_write_to_bus == 0, f"ERROR: unexpected B WRITE"
+        op_code = None
+        data = ins[1]
 
-        # if Signal.I_RD in op.expected_output:    assert op.i_reg_read_from_bus == 1, f"ERROR: expceted I READ"
-        # else:                                    assert op.i_reg_read_from_bus == 0, f"ERROR: unexpected I READ"
+        match ins[0]:
+            case "noop": op_code = 0
+            case "load a": op_code = 1
+            case "add": op_code = 2
+            case "sub": op_code = 3
+            case "store a": op_code = 4
+            case "load im": op_code = 5
+            case "jump": op_code = 6
+            case "jump c": op_code = 7
+            case "jump z": op_code = 8
+            case "out": op_code = 14
+            case "halt": op_code = 15
 
-        # if Signal.I_WRT in op.expected_output:   assert op.i_reg_write_to_bus == 1, f"ERROR: expceted I WRITE"
-        # else:                                    assert op.i_reg_write_to_bus == 0, f"ERROR: unexpected I WRITE"
+        return (op_code, data)
 
-        # if Signal.MAR_RD in op.expected_output:  assert op.mar_read_from_bus == 1, f"ERROR: expceted MAR READ"
-        # else:                                    assert op.mar_read_from_bus == 0, f"ERROR: unexpected MAR READ"
-
-        # if Signal.RAM_RD in op.expected_output:  assert op.ram_read_from_bus == 1, f"ERROR: expceted RAM READ"
-        # else:                                    assert op.ram_read_from_bus == 0, f"ERROR: unexpected RAM READ"
-
-        # if Signal.RAM_WRT in op.expected_output: assert op.ram_write_to_bus == 1, f"ERROR: expceted RAM WRITE"
-        # else:                                    assert op.ram_write_to_bus == 0, f"ERROR: unexpected RAM WRITE"
-
-        # if Signal.ALU_OUT in op.expected_output: assert op.alu_out == 1, f"ERROR: expceted ALU OUT"
-        # else:                                    assert op.alu_out == 0, f"ERROR: unexpected ALU OUT"
-
-        # if Signal.ALU_SUB in op.expected_output: assert op.alu_subtract == 1, f"ERROR: expceted ALU SUB"
-        # else:                                    assert op.alu_subtract == 0, f"ERROR: unexpected ALU SUB"
-
-        # if Signal.ALU_FLG in op.expected_output: assert op.alu_flags_in == 1, f"ERROR: expceted ALU FLAGS IN"
-        # else:                                    assert op.alu_flags_in == 0, f"ERROR: unexpected ALU FLAGS IN"
-
-        # if Signal.OUT_EN in op.expected_output:  assert op.out_en == 1, f"ERROR: expceted OUTPUT EN"
-        # else:                                    assert op.out_en == 0, f"ERROR: unexpected A OUTPUT EN"

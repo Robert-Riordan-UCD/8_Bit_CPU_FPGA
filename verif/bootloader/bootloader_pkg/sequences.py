@@ -32,19 +32,19 @@ class Disable(uvm_sequence):
 class AllPrograms(uvm_sequence):
     async def body(self):
         for prog in range(4):
+            reset = Reset("reset")    
+            await reset.start(self.sequencer)
+
             for _ in range(randint(32, 100)):
                 seq = SeqItem(program_select=prog, enable_bootload=1)
 
                 await self.start_item(seq)
                 await self.finish_item(seq)
 
-            reset = Reset("reset")    
-            await reset.start(self.sequencer)
-
 class Random(uvm_sequence):
     async def body(self):
         for _ in range(2000):
-            seq = SeqItem(rst=randint(0, 20) == 0, program_select=1, enable_bootload=1)
+            seq = SeqItem(rst=randint(0, 20) == 0, program_select=randint(0, 1), enable_bootload=randint(0, 1))
 
             await self.start_item(seq)
             await self.finish_item(seq)

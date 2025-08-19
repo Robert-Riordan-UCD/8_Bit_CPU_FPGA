@@ -1,0 +1,18 @@
+program, address, instruction, data
+0,0,load im,0
+0,1,add,15
+0,2,out,
+0,3,jump,1
+1,0,load im,0
+1,1,add,15
+1,2,jump c,10
+1,3,out,
+1,4,store a,13
+1,5,load a,14
+1,6,store a,15
+1,7,load a,13
+1,8,store a,14
+1,9,jump,1
+1,10,halt,
+1,14,data,1
+1,15,data,0

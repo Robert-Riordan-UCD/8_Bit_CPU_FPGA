@@ -12,7 +12,7 @@ class Env(uvm_env):
         self.driver = Driver(self)
         self.monitor = Monitor(self)
         self.scoreboard = Scoreboard(self)
-        self.coverage = Coverage(self)
+        self.coverage = Coverage("coverage", self)
     
     def connect_phase(self):
         self.logger.info("Connect ENV")

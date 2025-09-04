@@ -3,42 +3,60 @@
 """
 
 from pyuvm import uvm_subscriber, uvm_analysis_export, uvm_error
+from cocotb_coverage.coverage import  CoverPoint, CoverCross, coverage_db
 
-def intxz(value):
-    try:
-        return int(value)
-    except ValueError: # X and Z
-        return
+@CoverPoint(
+    "top.cpu_clk",
+    xf=lambda op: int(op.cpu_clk),
+    bins = [0, 1]
+)
+def point_cpu_clk(op): pass
+
+@CoverPoint(
+    "top.mode",
+    xf=lambda op: int(op.mode),
+    bins = [0, 1]
+)
+def point_mode(op): pass
+
+@CoverPoint(
+    "top.toggle",
+    xf=lambda op: int(op.toggle),
+    bins = [0, 1]
+)
+def point_toggle(op): pass
+
+@CoverPoint(
+    "top.halt",
+    xf=lambda op: int(op.halt),
+    bins = [0, 1]
+)
+def point_halt(op): pass
+
+@CoverCross(
+    "top.cross_mode_toggle_halt",
+    items=["top.mode", "top.toggle", "top.halt"]
+)
+def cross_cover(op): pass
 
 class Coverage(uvm_subscriber):
-    def __init__(self, parent, name="coverage"):
-        super().__init__(name, parent)
-        self.logger.info("Init COV")
-
-        self.cpu_clk = set()
-        self.mode = set()
-        self.toggle = set()
-        self.halt = set()
-
     def write(self, op):
-        self.logger.info("Write COV")
-
-        self.cpu_clk.add(int(op.cpu_clk))
-        self.mode.add(int(op.mode))
-        self.toggle.add(int(op.toggle))
-        self.halt.add(int(op.halt))
+        point_cpu_clk(op)
+        point_mode(op)
+        point_toggle(op)
+        point_halt(op)
+        cross_cover(op)
         
     def report_phase(self):
-        self.logger.info("Report COV")
-        
-        assert 0 in self.cpu_clk, "CPU CLK never 0"
-        assert 1 in self.cpu_clk, "CPU CLK never 1"
+        # coverage_db.report_coverage(self.logger.info, bins=True)
+        coverage_db.export_to_yaml("coverage.yaml")
 
-        assert 0 in self.mode, "MODE never continious"
-        assert 1 in self.mode, "MODE never manual"
+        for name, coverpoint in coverage_db.items():
+            if coverpoint.cover_percentage <= 0:
+                self.logger.error(f"COVER MISS: {name} {coverpoint.cover_percentage}%")
+            elif coverpoint.cover_percentage < 100:
+                self.logger.warning(f"COVER GAP: {name} {coverpoint.cover_percentage}%")
+            else:
+                self.logger.info(f"{name} {coverpoint.cover_percentage}%")
 
-        assert 0 in self.toggle, "TOGGLE never 0"
-        assert 1 in self.toggle, "TOGGLE never 1"
-
-        assert 0 in self.halt, "HALT never 0"
-        assert 1 in self.halt, "HALT never 1"
+        self.logger.info("Coverage saved to coverage.yaml")

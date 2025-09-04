@@ -3,96 +3,69 @@
 """
 
 from pyuvm import uvm_subscriber, uvm_analysis_export, uvm_error
+from cocotb_coverage.coverage import  CoverPoint, coverage_db
 
-def intxz(value):
-    try:
-        return int(value)
-    except ValueError: # X and Z
-        return
+@CoverPoint(
+    "top.bus_in",
+    xf=lambda op: op.bus,
+    bins = [i for i in range(0x100)]
+)
+def point_bus_in(op): pass
+
+@CoverPoint(
+    "top.switches_in",
+    xf=lambda op: op.program_switches,
+    bins = [i for i in range(0x100)]
+)
+def point_switches_in(op): pass
+
+@CoverPoint(
+    "top.addr_read",
+    xf=lambda op: op.address,
+    bins = [i for i in range(0x10)]
+)
+def point_addr_read(op): pass
+
+@CoverPoint(
+    "top.addr_write",
+    xf=lambda op: op.address,
+    bins = [i for i in range(0x10)]
+)
+def point_addr_write(op): pass
+
+@CoverPoint(
+    "top.bus_write",
+    xf=lambda op: op.ram_bus_out,
+    bins = [i for i in range(0x100)]
+)
+def point_bus_write(op): pass
 
 class Coverage(uvm_subscriber):
-    def __init__(self, parent, name="coverage"):
-        super().__init__(name, parent)
-        self.logger.info("Init COV")
-
-        self.address_read = set()
-        self.address_manual_read = set()
-        self.address_writes = set()
-        self.bus_reads = set()
-        self.bus_writes = set()
-        self.manual_reads = set()
-
     def write(self, op):
-        self.logger.info("Write COV")
-
         # Manual read
         if op.manual_read.value == 1 and op.read_from_bus.value == 0:
-            if not (a := intxz(op.address)) is None:
-                self.address_manual_read.add(intxz(a))
-            if not (p := intxz(op.program_switches)) is None:
-                self.manual_reads.add(intxz(p))
+            point_switches_in(op)
+            point_addr_read(op)
 
         # Bus read
         if op.manual_read.value == 0 and op.read_from_bus.value == 1:
-            if not (a := intxz(op.address)) is None:
-                self.address_read.add(intxz(a))
-            if not (b := intxz(op.bus)) is None:
-                self.bus_reads.add(intxz(b))
+            point_bus_in(op)
+            point_addr_read(op)
 
         # Writes
-        if not (a := intxz(op.address)) is None:
-            self.address_writes.add(intxz(a))
-        if not (b := intxz(op.ram_bus_out)) is None:
-            self.bus_writes.add(intxz(b))
-
+        point_addr_write(op)
+        point_bus_write(op)
         
     def report_phase(self):
-        self.logger.info("Report COV")
-        
-        addr_read_cov = len(self.address_read)/0x10
-        if addr_read_cov == 1:
-            self.logger.info(f"Coverage: All address values read from bus")
-        elif addr_read_cov > 0.8:
-            self.logger.warning(f"Coverage MISS: {100*addr_read_cov:0.1f}% address read from bus covered ({len(self.address_read)}/{0x10})")
-        else:
-            self.logger.error(f"Coverage MISS: {100*addr_read_cov:0.1f}% address read from bus covered ({len(self.address_read)}/{0x10})")            
+        coverage_db.export_to_yaml("coverage.yaml")
 
-        addr_read_cov = len(self.address_manual_read)/0x10
-        if addr_read_cov == 1:
-            self.logger.info(f"Coverage: All address values read from switches")
-        elif addr_read_cov > 0.8:
-            self.logger.warning(f"Coverage MISS: {100*addr_read_cov:0.1f}% address read from switches covered ({len(self.address_read)}/{0x10})")
-        else:
-            self.logger.error(f"Coverage MISS: {100*addr_read_cov:0.1f}% address read from switches covered ({len(self.address_read)}/{0x10})")            
+        for name, coverpoint in coverage_db.items():
+            if coverpoint.cover_percentage <= 0:
+                self.logger.error(f"COVER MISS: {name} {coverpoint.cover_percentage}%")
+            elif coverpoint.cover_percentage < 100:
+                self.logger.warning(f"COVER GAP: {name} {coverpoint.cover_percentage}%")
+                self.logger.warning(f"                  {coverpoint.detailed_coverage}")
+            else:
+                self.logger.info(f"{name} {coverpoint.cover_percentage}%")
 
-        addr_write_cov = len(self.address_writes)/0x10
-        if addr_write_cov == 1:
-            self.logger.info(f"Coverage: All address values write")
-        elif addr_write_cov > 0.8:
-            self.logger.warning(f"Coverage MISS: {100*addr_write_cov:0.1f}% address write covered ({len(self.address_writes)}/{0x10})")
-        else:
-            self.logger.error(f"Coverage MISS: {100*addr_write_cov:0.1f}% address write covered ({len(self.address_writes)}/{0x10})")            
-
-        bus_read_cov = len(self.bus_reads)/0x100
-        if bus_read_cov == 1:
-            self.logger.info(f"Coverage: All bus values read")
-        elif bus_read_cov > 0.8:
-            self.logger.warning(f"Coverage MISS: {100*bus_read_cov:0.1f}% bus read covered ({len(self.bus_reads)}/{0x100})")
-        else:
-            self.logger.error(f"Coverage MISS: {100*bus_read_cov:0.1f}% bus read covered ({len(self.bus_reads)}/{0x100})")  
-
-        bus_write_cov = len(self.bus_writes)/0x100
-        if bus_write_cov == 1:
-            self.logger.info(f"Coverage: All bus values write")
-        elif bus_write_cov > 0.8:
-            self.logger.warning(f"Coverage MISS: {100*bus_write_cov:0.1f}% bus write covered ({len(self.bus_writes)}/{0x100})")
-        else:
-            self.logger.error(f"Coverage MISS: {100*bus_write_cov:0.1f}% bus write covered ({len(self.bus_writes)}/{0x100})")
-        
-        man_read_cov = len(self.manual_reads)/0x100
-        if man_read_cov == 1:
-            self.logger.info(f"Coverage: All program switch values read")
-        elif man_read_cov > 0.8:
-            self.logger.warning(f"Coverage MISS: {100*man_read_cov:0.1f}% program switch read covered ({len(self.manual_reads)}/{0x100})")
-        else:
-            self.logger.error(f"Coverage MISS: {100*man_read_cov:0.1f}% program switch read covered ({len(self.manual_reads)}/{0x100})")  
+        self.logger.info("Coverage saved to coverage.yaml")

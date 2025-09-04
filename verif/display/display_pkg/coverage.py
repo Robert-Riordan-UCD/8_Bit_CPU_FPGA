@@ -6,52 +6,48 @@
 """
 
 from pyuvm import uvm_subscriber, uvm_analysis_export, uvm_error
+from cocotb_coverage.coverage import  CoverPoint, coverage_db
 from .segments import Segments
 
-def intxz(value):
-    try:
-        return int(value)
-    except ValueError: # X and Z
-        return
+@CoverPoint(
+    "top.bus_in",
+    xf=lambda op: op.bus,
+    bins = [i for i in range(0x100)]
+)
+def point_bus_in(op): pass
+
+@CoverPoint(
+    "top.digit",
+    xf=lambda op: op.digit,
+    bins = [2**(i) for i in range(4)]
+)
+def point_digit(op): pass
+
+@CoverPoint(
+    "top.segments",
+    xf=lambda op: op.segments,
+    bins = [s for s in Segments]
+)
+def point_segments(op): pass
 
 class Coverage(uvm_subscriber):
-    def __init__(self, parent, name="coverage"):
-        super().__init__(name, parent)
-        self.logger.info("Init COV")
-
-        self.segments = set()
-        self.digits = set()
-        self.bus_inputs = set()
-
     def write(self, op):
-        # self.logger.info("Write COV")
-
-        if (s := intxz(op.segments.value)): self.segments.add(s)
-        if (d := intxz(op.digit.value)): self.digits.add(d)
-
         if op.enable == 1 and op.cpu_clk == 1 and op.rst == 0:
-            if not (b := intxz(op.bus.value)) is None:
-                self.bus_inputs.add(b)
-
+            point_bus_in(op)
+        
+        point_digit(op)
+        point_segments(op)
         
     def report_phase(self):
-        self.logger.info("Report COV")
+        coverage_db.export_to_yaml("coverage.yaml")
 
-        for i, s in enumerate(Segments):
-            if not s in self.segments:
-                self.logger.error(f"Coverage ERROR: Missed segments for {i} ({s:02x})")
-        
-        for i in range(1, 5):
-            if not 2**1 in self.digits:
-                self.logger.error(f"Coverage ERROR: Missed digit {i**2:04b} ({2**1})")
+        for name, coverpoint in coverage_db.items():
+            if coverpoint.cover_percentage <= 0:
+                self.logger.error(f"COVER MISS: {name} {coverpoint.cover_percentage}%")
+            elif coverpoint.cover_percentage < 100:
+                self.logger.warning(f"COVER GAP: {name} {coverpoint.cover_percentage}%")
+                self.logger.warning(f"                  {coverpoint.detailed_coverage}")
+            else:
+                self.logger.info(f"{name} {coverpoint.cover_percentage}%")
 
-        bus_cov = len(self.bus_inputs)/0x100
-        if bus_cov == 1.0:
-            self.logger.info(f"Bus coverage: {bus_cov*100:0.1f}% ({len(self.bus_inputs)}/{0x100})")
-        elif bus_cov > 0.8:
-            self.logger.warning(f"Bus coverage: {bus_cov*100:0.1f}% ({len(self.bus_inputs)}/{0x100})")
-            for i in range(0x100):
-                if not i in self.bus_inputs:
-                    self.logger.info(f"Bus input missed: 0x{i:02x}")
-        else:
-            self.logger.error(f"Bus coverage: {bus_cov*100:0.1f}% ({len(self.bus_inputs)}/{0x100})")
+        self.logger.info("Coverage saved to coverage.yaml")

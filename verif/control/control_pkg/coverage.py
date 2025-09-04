@@ -3,12 +3,196 @@
 """
 
 from pyuvm import uvm_subscriber, uvm_analysis_export, uvm_error
+from cocotb_coverage.coverage import  CoverPoint, CoverCross, CoverCheck, coverage_db
 
-def intxz(value):
-    try:
-        return int(value)
-    except ValueError: # X and Z
-        return
+@CoverPoint(
+    "top.clk_halt",
+    xf=lambda op: int(op.clk_halt),
+    bins = [0, 1]
+)
+def point_clk_halt(op): pass
+
+@CoverPoint(
+    "top.pc_inc",
+    xf=lambda op: int(op.pc_inc),
+    bins = [0, 1]
+)
+def point_pc_inc(op): pass
+
+@CoverPoint(
+    "top.pc_jump",
+    xf=lambda op: int(op.pc_jump),
+    bins = [0, 1]
+)
+def point_pc_jump(op): pass
+
+@CoverPoint(
+    "top.pc_out",
+    xf=lambda op: int(op.pc_out),
+    bins = [0, 1]
+)
+def point_pc_out(op): pass
+
+@CoverPoint(
+    "top.a_reg_read_from_bus",
+    xf=lambda op: int(op.a_reg_read_from_bus),
+    bins = [0, 1]
+)
+def point_a_reg_read_from_bus(op): pass
+
+@CoverPoint(
+    "top.a_reg_write_to_bus",
+    xf=lambda op: int(op.a_reg_write_to_bus),
+    bins = [0, 1]
+)
+def point_a_reg_write_to_bus(op): pass
+
+@CoverPoint(
+    "top.b_reg_read_from_bus",
+    xf=lambda op: int(op.b_reg_read_from_bus),
+    bins = [0, 1]
+)
+def point_b_reg_read_from_bus(op): pass
+
+@CoverCheck(
+    "top.b_reg_write_to_bus",
+    f_fail=lambda op: int(op.b_reg_write_to_bus) == 1,
+    f_pass=lambda op: int(op.b_reg_write_to_bus) == 0
+)
+def check_b_reg_write_to_bus(op): pass
+
+@CoverPoint(
+    "top.i_reg_read_from_bus",
+    xf=lambda op: int(op.i_reg_read_from_bus),
+    bins = [0, 1]
+)
+def point_i_reg_read_from_bus(op): pass
+
+@CoverPoint(
+    "top.i_reg_write_to_bus",
+    xf=lambda op: int(op.i_reg_write_to_bus),
+    bins = [0, 1]
+)
+def point_i_reg_write_to_bus(op): pass
+
+@CoverPoint(
+    "top.mar_read_from_bus",
+    xf=lambda op: int(op.mar_read_from_bus),
+    bins = [0, 1]
+)
+def point_mar_read_from_bus(op): pass
+
+@CoverPoint(
+    "top.ram_read_from_bus",
+    xf=lambda op: int(op.ram_read_from_bus),
+    bins = [0, 1]
+)
+def point_ram_read_from_bus(op): pass
+
+@CoverPoint(
+    "top.ram_write_to_bus",
+    xf=lambda op: int(op.ram_write_to_bus),
+    bins = [0, 1]
+)
+def point_ram_write_to_bus(op): pass
+
+@CoverPoint(
+    "top.alu_out",
+    xf=lambda op: int(op.alu_out),
+    bins = [0, 1]
+)
+def point_alu_out(op): pass
+
+@CoverPoint(
+    "top.alu_subtract",
+    xf=lambda op: int(op.alu_subtract),
+    bins = [0, 1]
+)
+def point_alu_subtract(op): pass
+
+@CoverPoint(
+    "top.alu_flags_in",
+    xf=lambda op: int(op.alu_flags_in),
+    bins = [0, 1]
+)
+def point_alu_flags_in(op): pass
+
+@CoverPoint(
+    "top.out_en",
+    xf=lambda op: int(op.out_en),
+    bins = [0, 1]
+)
+def point_out_en(op): pass
+
+@CoverPoint(
+    "top.boot_write_to_bus",
+    xf=lambda op: int(op.boot_write_to_bus),
+    bins = [0, 1]
+)
+def point_boot_write_to_bus(op): pass
+
+@CoverCheck(
+    "top.check_bus_drivers",
+    f_fail=lambda op: sum([
+        int(op.pc_out),
+        int(op.a_reg_write_to_bus),
+        int(op.b_reg_write_to_bus),
+        int(op.i_reg_write_to_bus),
+        int(op.ram_write_to_bus),
+        int(op.alu_out),
+        int(op.boot_write_to_bus),
+    ]) > 1
+)
+def check_only_one_bus_driver(op): pass
+
+@CoverPoint(
+    "top.instruction",
+    xf=lambda op: int(op.instruction),
+    bins = [i for i in range(16)]
+)
+def point_instruction(op): pass
+
+@CoverPoint(
+    "top.alu_zero",
+    xf=lambda op: int(op.alu_zero),
+    bins = [0, 1]
+)
+def point_alu_zero(op): pass
+
+@CoverPoint(
+    "top.jump_zero",
+    xf=lambda op: int(op.instruction) == 0b1000,
+    bins = [0, 1]
+)
+def point_jump_zero(op): pass
+
+@CoverCross(
+    "top.cross_jump_zero",
+    items=["top.alu_zero", "top.jump_zero"],
+    ign_bins = [(0,0)]
+)
+def cross_jump_zero(op): pass
+
+@CoverPoint(
+    "top.alu_carry",
+    xf=lambda op: int(op.alu_carry),
+    bins = [0, 1]
+)
+def point_alu_carry(op): pass
+
+@CoverPoint(
+    "top.jump_carry",
+    xf=lambda op: int(op.instruction) == 0b0111,
+    bins = [0, 1]
+)
+def point_jump_carry(op): pass
+
+@CoverCross(
+    "top.cross_jump_carry",
+    items=["top.alu_carry", "top.jump_carry"],
+    ign_bins = [(0,0)]
+)
+def cross_jump_carry(op): pass
 
 class Coverage(uvm_subscriber):
     def __init__(self, parent, name="coverage"):
@@ -18,35 +202,8 @@ class Coverage(uvm_subscriber):
         self.counter = 0
         self.current_ins = None
         self.ins_count = 0
-        self.instructions = {}
-
-        self.jump_carry = False
-        self.jump_zero = False
-        self.no_jump_carry = False
-        self.no_jump_zero = False
-
-        self.clk_halt = set()
-        self.pc_inc = set()
-        self.pc_jump = set()
-        self.pc_out = set()
-        self.a_reg_read_from_bus = set()
-        self.a_reg_write_to_bus = set()
-        self.b_reg_read_from_bus = set()
-        self.b_reg_write_to_bus = set()
-        self.i_reg_read_from_bus = set()
-        self.i_reg_write_to_bus = set()
-        self.mar_read_from_bus = set()
-        self.ram_read_from_bus = set()
-        self.ram_write_to_bus = set()
-        self.alu_out = set()
-        self.alu_subtract = set()
-        self.alu_flags_in = set()
-        self.out_en = set()
-        self.boot_write_to_bus = set()
 
     def write(self, op):
-        self.logger.info("Write COV")
-        
         # Only add instruction to coverage if it is maintained for the full duration after the fetch cycle
         if op.rst == 1 or self.counter == 6:
             self.counter = 0
@@ -56,104 +213,50 @@ class Coverage(uvm_subscriber):
         if self.counter == 3:
             self.current_ins = op.instruction.value
             self.ins_count = 1
-            if self.current_ins == 0b0111: # Jump carry
-                if op.alu_carry == 1: self.jump_carry = True
-                else:                 self.no_jump_carry = True
-            elif self.current_ins == 0b1000: # Jump zero
-                if op.alu_zero == 1: self.jump_zero = True
-                else:                self.no_jump_zero = True
         elif self.current_ins == op.instruction.value:
             self.ins_count += 1
 
         if self.ins_count >= 5:
             self.ins_count = 0
-            if not (i := intxz(op.instruction)) is None:
-                self.instructions[i] = self.instructions.get(i, 0) + 1
+            point_instruction(op)
 
-        self.clk_halt.add(int(op.clk_halt.value))
-        self.pc_inc.add(int(op.pc_inc.value))
-        self.pc_jump.add(int(op.pc_jump.value))
-        self.pc_out.add(int(op.pc_out.value))
-        self.a_reg_read_from_bus.add(int(op.a_reg_read_from_bus.value))
-        self.a_reg_write_to_bus.add(int(op.a_reg_write_to_bus.value))
-        self.b_reg_read_from_bus.add(int(op.b_reg_read_from_bus.value))
-        self.b_reg_write_to_bus.add(int(op.b_reg_write_to_bus.value))
-        self.i_reg_read_from_bus.add(int(op.i_reg_read_from_bus.value))
-        self.i_reg_write_to_bus.add(int(op.i_reg_write_to_bus.value))
-        self.mar_read_from_bus.add(int(op.mar_read_from_bus.value))
-        self.ram_read_from_bus.add(int(op.ram_read_from_bus.value))
-        self.ram_write_to_bus.add(int(op.ram_write_to_bus.value))
-        self.alu_out.add(int(op.alu_out.value))
-        self.alu_subtract.add(int(op.alu_subtract.value))
-        self.alu_flags_in.add(int(op.alu_flags_in.value))
-        self.out_en.add(int(op.out_en.value))
-        self.boot_write_to_bus.add(int(op.boot_write_to_bus.value))
+        point_clk_halt(op)
+        point_pc_inc(op)
+        point_pc_jump(op)
+        point_pc_out(op)
+        point_a_reg_read_from_bus(op)
+        point_a_reg_write_to_bus(op)
+        point_b_reg_read_from_bus(op)
+        check_b_reg_write_to_bus(op)
+        point_i_reg_read_from_bus(op)
+        point_i_reg_write_to_bus(op)
+        point_mar_read_from_bus(op)
+        point_ram_read_from_bus(op)
+        point_ram_write_to_bus(op)
+        point_alu_out(op)
+        point_alu_subtract(op)
+        point_alu_flags_in(op)
+        point_out_en(op)
+        point_boot_write_to_bus(op)
+        check_only_one_bus_driver(op)
+
+        point_alu_zero(op)
+        point_jump_zero(op)
+        cross_jump_zero(op)
+        point_alu_carry(op)
+        point_jump_carry(op)
+        cross_jump_carry(op)
 
     def report_phase(self):
-        self.logger.info("Report COV")
+        coverage_db.export_to_yaml("coverage.yaml")
 
-        for i in range(0, 0x10):
-            if i in self.instructions:
-                self.logger.info(f"Coverage: Instruction {i} covered {self.instructions[i]} times")
+        for name, coverpoint in coverage_db.items():
+            if coverpoint.cover_percentage <= 0:
+                self.logger.error(f"COVER MISS: {name} {coverpoint.cover_percentage}%")
+            elif coverpoint.cover_percentage < 100:
+                self.logger.warning(f"COVER GAP: {name} {coverpoint.cover_percentage}%")
+                self.logger.warning(f"                  {coverpoint.detailed_coverage}")
             else:
-                self.logger.error(f"Coverage MISS: Instruction {i} missed")
+                self.logger.info(f"{name} {coverpoint.cover_percentage}%")
 
-        assert self.jump_carry, "JUMP CARRY never called with ALU CARRY set"
-        assert self.no_jump_carry, "JUMP CARRY never called without ALU CARRY set"
-        assert self.jump_zero, "JUMP ZERO never called with ALU ZERO set"
-        assert self.no_jump_zero, "JUMP ZERO never called without ALU ZERO set"
-
-        assert 0 in self.clk_halt, "HALT never 0"
-        assert 1 in self.clk_halt, "HALT never 1"
-        
-        assert 0 in self.pc_inc, "PC INC never 0"
-        assert 1 in self.pc_inc, "PC INC never 1"
-        
-        assert 0 in self.pc_out, "PC OUT never 0"
-        assert 1 in self.pc_out, "PC out never 1"
-        
-        assert 0 in self.pc_jump, "PC JUMP never 0"
-        assert 1 in self.pc_jump, "PC JUMP never 1"
-        
-        assert 0 in self.a_reg_read_from_bus, "A READ never 0"
-        assert 1 in self.a_reg_read_from_bus, "A READ never 1"
-        
-        assert 0 in self.a_reg_write_to_bus, "A WRITE never 0"
-        assert 1 in self.a_reg_write_to_bus, "A WRITE never 1"
-        
-        assert 0 in self.b_reg_read_from_bus, "B READ never 0"
-        assert 1 in self.b_reg_read_from_bus, "B READ never 1"
-        
-        assert 0 in self.b_reg_write_to_bus, "B WRITE never 0"
-        # assert 1 in self.b_reg_write_to_bus, "B WRITE never 1"
-        assert not 1 in self.b_reg_write_to_bus, "B WRITE 1 but no instruction to set B WRITE"
-        
-        assert 0 in self.i_reg_read_from_bus, "I READ never 0"
-        assert 1 in self.i_reg_read_from_bus, "I READ never 1"
-
-        assert 0 in self.i_reg_write_to_bus, "I WRITE never 0"
-        assert 1 in self.i_reg_write_to_bus, "I WRITE never 1"
-
-        assert 0 in self.mar_read_from_bus, "MAR READ never 0"
-        assert 1 in self.mar_read_from_bus, "MAR READ never 1"
-
-        assert 0 in self.ram_read_from_bus, "RAM READ never 0"
-        assert 1 in self.ram_read_from_bus, "RAM READ never 1"
-        
-        assert 0 in self.ram_write_to_bus, "RAM WRITE never 0"
-        assert 1 in self.ram_write_to_bus, "RAM WRITE never 1"
-        
-        assert 0 in self.alu_out, "ALU OUT never 0"
-        assert 1 in self.alu_out, "ALU OUT never 1"
-        
-        assert 0 in self.alu_flags_in, "ALU FLAGS IN never 0"
-        assert 1 in self.alu_flags_in, "ALU FLAGS IN never 1"
-        
-        assert 0 in self.alu_subtract, "ALU SUB never 0"
-        assert 1 in self.alu_subtract, "ALU SUB never 1"
-        
-        assert 0 in self.out_en, "OUT EN never 0"
-        assert 1 in self.out_en, "OUT EN never 1"
-
-        assert 0 in self.boot_write_to_bus, "BOOT WRITE TO BUS never 0"
-        assert 1 in self.boot_write_to_bus, "BOOT WRITE TO BUS never 1"
+        self.logger.info("Coverage saved to coverage.yaml")

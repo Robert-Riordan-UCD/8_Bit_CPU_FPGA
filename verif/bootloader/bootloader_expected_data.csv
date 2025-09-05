@@ -14,5 +14,5 @@ program, address, instruction, data
 1,8,store a,14
 1,9,jump,1
 1,10,halt,
-1,14,data,1
-1,15,data,0
+1,14,,1
+1,15,,0

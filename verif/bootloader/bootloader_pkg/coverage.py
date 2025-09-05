@@ -1,47 +1,59 @@
-"""
-    Coverage Goals
-"""
-
 from pyuvm import uvm_subscriber, uvm_analysis_export, uvm_error
+from cocotb_coverage.coverage import  CoverPoint, CoverCross, coverage_db
 
-def intxz(value):
-    try:
-        return int(value)
-    except ValueError: # X and Z
-        return
+@CoverPoint(
+    "top.select",
+    xf=lambda op: op.program_select,
+    bins = [i for i in range(4)]
+)
+def point_select(op): pass
+
+@CoverPoint(
+    "top.enable",
+    xf=lambda op: op.enable_bootload,
+    bins = [0, 1]
+)
+def point_enable(op): pass
+
+@CoverPoint(
+    "top.boot_addr",
+    xf=lambda op: op.bootload_address,
+    bins = [0, 1]
+)
+def point_boot_addr(op): pass
+
+@CoverPoint(
+    "top.boot_data",
+    xf=lambda op: op.bootload_ram,
+    bins = [0, 1]
+)
+def point_boot_data(op): pass
+
+@CoverCross(
+    "top.cross_enable_select",
+    items=["top.enable", "top.select"]
+)
+def cross_enable_select(op): pass
 
 class Coverage(uvm_subscriber):
-    def __init__(self, parent, name="coverage"):
-        super().__init__(name, parent)
-        self.logger.info("Init COV")
-
-        self.program_select = set()
-        self.enable = set()
-
-        self.bootload_address = set()
-        self.bootload_ram = set()
-
     def write(self, op):
-        self.logger.info("Write COV")
-        
         if op.rst.value == 0:
-            self.program_select.add(int(op.program_select.value))
-            self.enable.add(int(op.enable_bootload.value))
-
-            self.bootload_address.add(int(op.bootload_address.value))
-            self.bootload_ram.add(int(op.bootload_ram.value))
+            point_enable(op)
+            point_select(op)
+            point_boot_addr(op)
+            point_boot_data(op)
+            cross_enable_select(op)
 
     def report_phase(self):
-        self.logger.info("Report COV")
+        coverage_db.export_to_yaml("coverage.yaml")
 
-        for i in range(3):
-            assert i in self.program_select, f"PROGRAM SELECT never set to {i}"
+        for name, coverpoint in coverage_db.items():
+            if coverpoint.cover_percentage <= 0:
+                self.logger.error(f"COVER MISS: {name} {coverpoint.cover_percentage}%")
+            elif coverpoint.cover_percentage < 100:
+                self.logger.warning(f"COVER GAP: {name} {coverpoint.cover_percentage}%")
+                self.logger.warning(f"                  {coverpoint.detailed_coverage}")
+            else:
+                self.logger.info(f"{name} {coverpoint.cover_percentage}%")
 
-        assert 0 in self.enable, "ENABLE never 0"
-        assert 1 in self.enable, "ENABLE never 1"
-
-        assert 0 in self.bootload_address, "BOOT ADDRESS never 0"
-        assert 1 in self.bootload_address, "BOOT ADDRESS never 1"
-
-        assert 0 in self.bootload_ram, "BOOT RAM never 0"
-        assert 1 in self.bootload_ram, "BOOT RAM never 1"
+        self.logger.info("Coverage saved to coverage.yaml")

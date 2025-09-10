@@ -59,7 +59,7 @@ make
 | Control                 |✅|✅|✅|
 | Output                  |✅|✅|✅|
 | Bus                     |✅|✅|✅|
-| Bootloader              |✅|❌|❌|
+| Bootloader              |✅|✅|✅|
 ||||
 | Top                     |✅|❌|✅|
 

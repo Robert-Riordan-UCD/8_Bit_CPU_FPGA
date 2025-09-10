@@ -20,7 +20,6 @@ module fpga_interface (
     /* Clock */
     input logic clk_mode,
     input logic clk_pulse,
-    output logic clk_output,
 
     /* RAM programming */
     input logic ram_mode,
@@ -28,12 +27,17 @@ module fpga_interface (
     input logic [7:0] ram_switches,
     input logic [3:0] mar_switches,
 
+    /* Bootloader */
+    input logic [3:0] bootloader_switches,
+    input logic enable_bootloader,
+
     /* Display */
     output logic [3:0] digit,
     output logic [7:0] segments,
 
     /* Debug leds */
-    output logic [5:0] led
+    output logic [5:0] led,
+    output logic [9:0] debug 
 );
     /* Reset is onboard button */
     logic rst;
@@ -91,8 +95,6 @@ module fpga_interface (
         .halt(clk_halt),
         .cpu_clk(cpu_clk)
     );
-
-    assign clk_output = ~cpu_clk;
 
     /* Program counter */
     program_counter u_pc (
@@ -219,8 +221,8 @@ module fpga_interface (
     bootloader u_bootloader(
         .clk(cpu_clk),
         .rst(rst),
-        .program_select(2'b01),
-        .enable_bootload(1'b1),
+        .program_select(bootloader_switches[1:0]),
+        .enable_bootload(enable_bootloader),
         .data(boot_bus_out),
         .bootload_address(bootload_address),
         .bootload_ram(bootload_ram)
@@ -264,6 +266,29 @@ module fpga_interface (
     logic [7:0] bus_data;
 
     /* Debug LEDs */
-    assign led = ~{clk_halt, alu_zero, alu_carry, alu_flags_in, ram_read_from_bus, a_reg_write_to_bus};
+    // assign led = ~{clk_halt, cpu_clk, pc_out, pc_inc, ram_read_from_bus, a_reg_write_to_bus};
+    // assign led = ~{a_reg_write_to_bus, a_reg_read_from_bus, pc_out, pc_jump, pc_inc, clk_halt};
+    assign led = ~{cpu_clk, boot_write_to_bus, mar_read_from_bus, bootload_address, ram_read_from_bus, bootload_ram};
+    assign debug = {
+        // clk_mode,
+        // clk_pulse,
+        // ram_mode,
+        // ram_pulse,
+        // // b_reg_read_from_bus,
+        // // i_reg_read_from_bus,
+        // // i_reg_write_to_bus,
+        // // mar_read_from_bus,
+        // ram_read_from_bus,
+        // ram_write_to_bus,
+        // alu_out,
+        // alu_subtract,
+        // alu_flags_in,
+        // out_en
+        // // boot_write_to_bus,
+        // // ram_switches,
+        // enable_bootloader,
+        // bootloader_switches,
+        bus_data
+    };
 
 endmodule

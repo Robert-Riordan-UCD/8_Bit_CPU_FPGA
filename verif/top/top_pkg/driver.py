@@ -18,15 +18,17 @@ class Driver(uvm_driver):
             op = await self.seq_item_port.get_next_item()
             self.logger.info("Run DRV: OP recieved")
 
-            self.dut.reset.value = op.reset
+            self.dut.rst_n.value = op.rst_n
             self.dut.clk_mode.value = op.clk_mode
             self.dut.clk_pulse.value = op.clk_pulse
-            self.dut.mar_address.value = op.mar_address
-            self.dut.ram_data.value = op.ram_data
+            self.dut.mar_switches.value = op.mar_switches
+            self.dut.ram_switches.value = op.ram_switches
             self.dut.ram_mode.value = op.ram_mode
             self.dut.ram_pulse.value = op.ram_pulse
+            self.dut.bootloader_program_select = op.bootloader_program_select
+            self.dut.enable_bootloader = op.enable_bootloader
 
-            await cocotb.triggers.FallingEdge(self.dut.sys_clk)
+            await cocotb.triggers.FallingEdge(self.dut.clk)
 
             self.logger.info("Run DRV: OP complete")
             self.seq_item_port.item_done()

@@ -1,6 +1,6 @@
 DUT ?= top
 TOPLEVEL_LANG = verilog
-VERILOG_SOURCES = ../../src/*.sv ./tb_$(DUT).sv
+VERILOG_SOURCES = ../../src/cpu_pkg.sv ../../src/*.sv ./tb_$(DUT).sv
 TOPLEVEL = tb_$(DUT)
 # Python test module
 MODULE = test_$(DUT)

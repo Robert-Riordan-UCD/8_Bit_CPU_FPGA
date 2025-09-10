@@ -1,54 +1,41 @@
-/* This module connects each of the major CPU components together
- * and provides an inteface to the FPGA IO
- */
 module top (
-    // Onboard IO
-    // input logic clk, // Internal system clock
-    // input logic btn1_n,
-    // input logic btn2_n,
-    // output logic [5:0] led,
+    /* Onboard signals */
+    input logic clk,
+    input logic rst_n,
 
-    // // GPIO
-    // input logic gpio_slide_switch, // clock mode
-    // input logic gpio_button // clock trigger FIXME: Needs debouncing
-
-    input logic sys_clk,
-    input logic reset,
-
+    /* Clock */
     input logic clk_mode,
     input logic clk_pulse,
 
-    input logic [3:0] mar_address,
-    input logic [7:0] ram_data,
+    /* RAM programming */
     input logic ram_mode,
     input logic ram_pulse,
+    input logic [7:0] ram_switches,
+    input logic [3:0] mar_switches,
 
+    /* Bootloader */
+    input logic [3:0] bootloader_switches,
+    input logic enable_bootloader,
+
+    /* Display */
     output logic [3:0] digit,
-    output logic [7:0] segments
-    // 4 output digit
-    // 8 output segements
+    output logic [7:0] segments,
+
+    /* Debug leds */
+    output logic [5:0] led,
+    output logic [9:0] debug 
 );
-    // Internal signals
+    /* Reset is onboard button */
+    logic rst;
+    assign rst = ~rst_n;
+
     logic cpu_clk;
 
-    // logic reset;
-    // assign reset = 0;
-
-    // logic clk_mode, clk_toggle;
-    // assign clk_mode = gpio_slide_switch;
-    // assign clk_toggle = gpio_button;
-
-    tri [7:0] bus;
-
-    logic [7:0] a_reg_value;
-    logic [7:0] b_reg_value;
-    logic [3:0] memory_address;
-    logic [7:0] instruction;
-
+    /* Control signals */
     logic alu_carry;
     logic alu_zero;
-
-    // Control signals
+    logic bootload_address;
+    logic bootload_ram;
     logic clk_halt;
     logic pc_inc;
     logic pc_jump;
@@ -66,93 +53,122 @@ module top (
     logic alu_subtract;
     logic alu_flags_in;
     logic out_en;
+    logic boot_write_to_bus;
 
-    // Core modules
+    /* Buses */
+    logic [7:0] pc_bus_out;
+    logic [7:0] i_bus_out;
+    logic [7:0] ram_bus_out;
+    logic [7:0] a_bus_out;
+    logic [7:0] b_bus_out;
+    logic [7:0] alu_bus_out;
+    logic [7:0] boot_bus_out;
+    
+    /* Other data */
+    logic [3:0] memory_address;
+    logic [7:0] instruction;
+    logic [7:0] a_reg_value;
+    logic [7:0] b_reg_value;
+
+    /* Clock */
+    // Pin 69 - resistor - led - VCC (Output)
+    // Pin 68 - slide switch center - VCC/GND (Mode)
+    // Pin 57 - button - VCC (Pulse)
     clock u_clock (
-        .sys_clk(sys_clk),
+        .sys_clk(clk),
         .mode(clk_mode),
         .manual_toggle(clk_pulse),
         .halt(clk_halt),
         .cpu_clk(cpu_clk)
     );
 
+    /* Program counter */
     program_counter u_pc (
         .clk(cpu_clk),
-        .rst(reset),
+        .rst(rst),
         .inc(pc_inc),
         .jump(pc_jump),
-        .out(pc_out),
-        .bus(bus)
+        .bus_in(bus_data),
+        .bus_out(pc_bus_out)
     );
 
+    /* Memory address register */
+    // Pins 28, 29, 30, 33 (MAR switches)
     memory_address_register u_mar (
         .clk(cpu_clk),
-        .rst(reset),
+        .rst(rst),
         .read_from_bus(mar_read_from_bus),
         .manual_mode(ram_mode),
         .manual_read(ram_pulse),
-        .manual_switches(mar_address),
-        .bus(bus[3:0]),
+        .manual_switches(mar_switches),
+        .bus(bus_data[3:0]),
         .address(memory_address)
     );
 
-    register u_a_reg (
-        .clk(cpu_clk),
-        .rst(reset),
-        .read_from_bus(a_reg_read_from_bus),
-        .write_to_bus(a_reg_write_to_bus),
-        .bus(bus),
-        .value(a_reg_value)
-    );
-
+    /* Random access memory */
     random_access_memory u_ram(
         .clk(cpu_clk),
         .read_from_bus(ram_read_from_bus),
-        .write_to_bus(ram_write_to_bus),
         .manual_mode(ram_mode),
         .manual_read(ram_pulse),
         .address(memory_address),
-        .program_switches(ram_data),
-        .bus(bus)
+        .program_switches(ram_switches),
+        .bus_in(bus_data),
+        .bus_out(ram_bus_out)
     );
 
+    /* A register */
+    register u_a_reg (
+        .clk(cpu_clk),
+        .rst(rst),
+        .read_from_bus(a_reg_read_from_bus),
+        .bus_in(bus_data),
+        .bus_out(a_bus_out),
+        .value(a_reg_value)
+    );
+
+    /* B register */
+    register u_b_reg (
+        .clk(cpu_clk),
+        .rst(rst),
+        .read_from_bus(b_reg_read_from_bus),
+        .bus_in(bus_data),
+        .bus_out(b_bus_out),
+        .value(b_reg_value)
+    );
+
+    /* Arithmetic logic unit */
     alu u_alu (
         .clk(cpu_clk),
-        .rst(reset),
+        .rst(rst),
         .a(a_reg_value),
         .b(b_reg_value),
-        .out(alu_out),
         .subtract(alu_subtract),
         .flags_in(alu_flags_in),
-        .bus(bus),
+        .bus(alu_bus_out),
         .carry(alu_carry),
         .zero(alu_zero)
     );
 
+    /* Instruction register */
     register #(8'h0F) u_i_reg (
         .clk(cpu_clk),
-        .rst(reset),
+        .rst(rst),
         .read_from_bus(i_reg_read_from_bus),
-        .write_to_bus(i_reg_write_to_bus),
-        .bus(bus),
+        .bus_in(bus_data),
+        .bus_out(i_bus_out),
         .value(instruction)
     );
-    
-    register u_b_reg (
-        .clk(cpu_clk),
-        .rst(reset),
-        .read_from_bus(b_reg_read_from_bus),
-        .write_to_bus(b_reg_write_to_bus),
-        .bus(bus),
-        .value(b_reg_value)
-    );
-    
+
+    /* Control */
     control u_control(
         .clk(cpu_clk),
-        .rst(reset),
+        .rst(rst),
         .instruction(instruction[7:4]),
         .alu_carry(alu_carry),
         .alu_zero(alu_zero),
+        .bootload_address(bootload_address),
+        .bootload_ram(bootload_ram),
         .clk_halt(clk_halt),
         .pc_inc(pc_inc),
         .pc_jump(pc_jump),
@@ -169,35 +185,96 @@ module top (
         .alu_out(alu_out),
         .alu_subtract(alu_subtract),
         .alu_flags_in(alu_flags_in),
-        .out_en(out_en)
+        .out_en(out_en),
+        .boot_write_to_bus(boot_write_to_bus)
     );
 
+    /* Display */
+    // Pins 40, 35, 41, 42, 51, 52, 53, 54, 55 (Segments)
+    // Pins 32, 31, 49, 48 (Digit)
+    // Each pin - resistor - led - VCC
     display u_display(
         .cpu_clk(cpu_clk),
-        .sys_clk(sys_clk),
-        .rst(reset),
+        .sys_clk(clk),
+        .rst(rst),
         .enable(out_en),
-        .bus(bus),
+        .bus(bus_data),
         .segments(segments),
         .digit(digit)
     );
 
-    // FPGA IO connections
-    // assign led = ~{bus[3:0], 1'b0, cpu_clk};
-    // 1 input clock mode
-    // 1 input clock pulse
-    // 1 input reset
-    
-    // 4inputs MAR address
-    // 8 inputs RAM data
-    // 1 input program mode
-    // 1 input program pulse
+    /* Bootloader */
+    bootloader u_bootloader(
+        .clk(cpu_clk),
+        .rst(rst),
+        .program_select(bootloader_switches[1:0]),
+        .enable_bootload(enable_bootloader),
+        .data(boot_bus_out),
+        .bootload_address(bootload_address),
+        .bootload_ram(bootload_ram)
+    );
 
-    // 4 output digit
-    // 8 output segements
+    /* Bus */
+    localparam LANES = 7;
+    localparam BUS_WIDTH = 8;
+    logic [LANES-1:0] lane_select;
+    logic [LANES*BUS_WIDTH-1:0] lane_data;
 
-    // Total inputs 17
-    // Total outputs 12
-    // Total IO 29
-    // Tang nano should have 45 GPIO pins so hopefully there shouldn't be an issue
+    assign lane_select = {
+        boot_write_to_bus,
+        alu_out,
+        b_reg_write_to_bus,
+        a_reg_write_to_bus,
+        i_reg_write_to_bus,
+        ram_write_to_bus,
+        pc_out
+    };
+
+    assign lane_data = {
+        boot_bus_out,
+        alu_bus_out,
+        b_bus_out,
+        a_bus_out,
+        i_bus_out,
+        ram_bus_out,
+        pc_bus_out
+    };
+
+    bus #(
+        .WIDTH(BUS_WIDTH),
+        .LANES(LANES)
+    ) u_bus (
+        .lane_select(lane_select),
+        .lane_data(lane_data),
+        .bus_data(bus_data)
+    );
+
+    logic [7:0] bus_data;
+
+    /* Debug LEDs */
+    // assign led = ~{clk_halt, cpu_clk, pc_out, pc_inc, ram_read_from_bus, a_reg_write_to_bus};
+    // assign led = ~{a_reg_write_to_bus, a_reg_read_from_bus, pc_out, pc_jump, pc_inc, clk_halt};
+    assign led = ~{cpu_clk, boot_write_to_bus, mar_read_from_bus, bootload_address, ram_read_from_bus, bootload_ram};
+    assign debug = {
+        // clk_mode,
+        // clk_pulse,
+        // ram_mode,
+        // ram_pulse,
+        // // b_reg_read_from_bus,
+        // // i_reg_read_from_bus,
+        // // i_reg_write_to_bus,
+        // // mar_read_from_bus,
+        // ram_read_from_bus,
+        // ram_write_to_bus,
+        // alu_out,
+        // alu_subtract,
+        // alu_flags_in,
+        // out_en
+        // // boot_write_to_bus,
+        // // ram_switches,
+        // enable_bootloader,
+        // bootloader_switches,
+        bus_data
+    };
+
 endmodule

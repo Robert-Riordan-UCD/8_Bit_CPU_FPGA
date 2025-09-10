@@ -2,32 +2,47 @@
 
 module tb_top;
     
-    logic sys_clk=0;
-    always #1 sys_clk = ~sys_clk;
+    logic clk=0;
+    always #1 clk = ~clk;
 
-    logic reset=0;
-    logic clk_mode=0;
-    logic clk_pulse=0;
+    /* Onboard signals */
+    logic rst_n;
 
-    logic [3:0] mar_address=0;
-    logic [7:0] ram_data=0;
-    logic ram_mode=0;
-    logic ram_pulse=0;
+    /* Clock */
+    logic clk_mode;
+    logic clk_pulse;
 
+    /* RAM programming */
+    logic ram_mode;
+    logic ram_pulse;
+    logic [7:0] ram_switches;
+    logic [3:0] mar_switches;
+
+    /* Bootloader */
+    logic [3:0] bootloader_program_select;
+    logic enable_bootloader;
+
+    /* Display */
     logic [3:0] digit;
     logic [7:0] segments;
 
+    /* Debug leds */
+    logic [5:0] led;
+
     top dut(
-        .sys_clk(sys_clk),
-        .reset(reset),
+        .clk(clk),
+        .rst_n(rst_n),
         .clk_mode(clk_mode),
         .clk_pulse(clk_pulse),
-        .mar_address(mar_address),
-        .ram_data(ram_data),
+        .mar_switches(mar_switches),
+        .ram_switches(ram_switches),
         .ram_mode(ram_mode),
         .ram_pulse(ram_pulse),
+        .bootloader_switches(bootloader_program_select),
+        .enable_bootloader(enable_bootloader),
         .digit(digit),
-        .segments(segments)
+        .segments(segments),
+        .led(led)
     );
 
 endmodule

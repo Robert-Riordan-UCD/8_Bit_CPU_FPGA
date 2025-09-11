@@ -1091,6 +1091,127 @@
 				)
 			)
 		)
+		(symbol "Device:R"
+			(pin_numbers hide)
+			(pin_names
+				(offset 0)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "R"
+				(at 2.032 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "R"
+				(at 0 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at -1.778 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Resistor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "R res resistor"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "R_*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "R_0_1"
+				(rectangle
+					(start -1.016 -2.54)
+					(end 1.016 2.54)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "R_1_1"
+				(pin passive line
+					(at 0 3.81 270)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -3.81 90)
+					(length 1.27)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+		)
 		(symbol "Display_Character:CA56-12EWA"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -6051,7 +6172,7 @@
 		(uuid "90016729-fe22-49c6-9984-a99f65f4967b")
 	)
 	(label "DIGIT 3"
-		(at 252.73 140.97 0)
+		(at 260.35 140.97 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6161,7 +6282,7 @@
 		(uuid "a033b27b-adcf-48db-b99d-c776dcb17ab9")
 	)
 	(label "DIGIT 2"
-		(at 252.73 138.43 0)
+		(at 260.35 138.43 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6251,7 +6372,7 @@
 		(uuid "bdd3dd70-042a-4053-9a25-afb51f2629c9")
 	)
 	(label "DIGIT 1"
-		(at 252.73 135.89 0)
+		(at 260.35 135.89 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6371,7 +6492,7 @@
 		(uuid "d67a723a-d1bf-4421-80b2-eca19899dd9e")
 	)
 	(label "DIGIT 0"
-		(at 252.73 133.35 0)
+		(at 260.35 133.35 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -6930,6 +7051,74 @@
 			(project "8-bit-cpu"
 				(path "/dfc7c4d1-437a-4c4a-8150-10c283b4ed25"
 					(reference "SW5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 256.54 138.43 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "4369d660-2ae8-4c03-a5ef-41023e235860")
+		(property "Reference" "R3"
+			(at 256.54 132.08 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1k"
+			(at 256.54 134.62 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal"
+			(at 256.54 140.208 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 256.54 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 256.54 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "0046af3d-5f07-4e90-9357-c51f9f6ac9bd")
+		)
+		(pin "2"
+			(uuid "50edec49-66fd-4f64-bcb3-92161ddf3a46")
+		)
+		(instances
+			(project "8-bit-cpu"
+				(path "/dfc7c4d1-437a-4c4a-8150-10c283b4ed25"
+					(reference "R3")
 					(unit 1)
 				)
 			)
@@ -7505,6 +7694,210 @@
 			(project "8-bit-cpu"
 				(path "/dfc7c4d1-437a-4c4a-8150-10c283b4ed25"
 					(reference "SW8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 256.54 140.97 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "77c550c4-3b57-4511-80b6-c3bc9a8d93cc")
+		(property "Reference" "R4"
+			(at 256.54 134.62 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1k"
+			(at 256.54 137.16 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal"
+			(at 256.54 142.748 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 256.54 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 256.54 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "46eeb83d-b772-401b-869d-3e8e5424749c")
+		)
+		(pin "2"
+			(uuid "adcedb8b-a352-4179-9025-58a956146d3a")
+		)
+		(instances
+			(project "8-bit-cpu"
+				(path "/dfc7c4d1-437a-4c4a-8150-10c283b4ed25"
+					(reference "R4")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 256.54 135.89 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "80d70ded-a556-480a-b23c-3f58c82fc291")
+		(property "Reference" "R2"
+			(at 256.54 129.54 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1k"
+			(at 256.54 132.08 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal"
+			(at 256.54 137.668 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 256.54 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 256.54 135.89 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "7caedb83-483d-43eb-8d65-29a88a4b123a")
+		)
+		(pin "2"
+			(uuid "7aec3e40-908b-41d2-9f10-5e9504e352b8")
+		)
+		(instances
+			(project "8-bit-cpu"
+				(path "/dfc7c4d1-437a-4c4a-8150-10c283b4ed25"
+					(reference "R2")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:R")
+		(at 256.54 133.35 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "a981b1a2-2860-457a-9eef-4cc404d60833")
+		(property "Reference" "R1"
+			(at 256.54 127 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "1k"
+			(at 256.54 129.54 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Resistor_THT:R_Axial_DIN0309_L9.0mm_D3.2mm_P12.70mm_Horizontal"
+			(at 256.54 135.128 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 256.54 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Resistor"
+			(at 256.54 133.35 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "637d8185-7513-4a30-8740-f5e1523ca097")
+		)
+		(pin "2"
+			(uuid "0dffee92-d041-4d28-954e-bbc116b964e6")
+		)
+		(instances
+			(project ""
+				(path "/dfc7c4d1-437a-4c4a-8150-10c283b4ed25"
+					(reference "R1")
 					(unit 1)
 				)
 			)

@@ -200,7 +200,7 @@ module control (
         case (step)
             0: fetch(step);
             1: fetch(step);
-            2: control_signals = `CLK_HLT;
+            2: control_signals = (`CLK_HLT & ~rst);
             default: control_signals = 0;
         endcase
     endtask

@@ -288,7 +288,7 @@ module fpga_interface (
         // // ram_switches,
         // enable_bootloader,
         // bootloader_switches,
-        bus_data
+        memory_address
     };
 
 endmodule

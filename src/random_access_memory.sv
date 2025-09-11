@@ -19,13 +19,18 @@ module random_access_memory (
     always_ff @(posedge clk) begin
         if (manual_mode) begin
             if (manual_read) begin
-                data[address] <= program_switches;
+                data[address] <= manual_data;
             end
         end else begin
             if (read_from_bus) begin
                 data[address] <= bus_in;
             end
         end
+    end
+
+    logic [7:0] manual_data;
+    always_ff @(posedge manual_read) begin
+        manual_data <= program_switches;
     end
 
     assign bus_out = data[address];

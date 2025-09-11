@@ -21,7 +21,6 @@ class Driver(uvm_driver):
             self.dut.rst.value = op.rst
             self.dut.read_from_bus.value = op.read_from_bus
             self.dut.manual_mode.value = op.manual_mode
-            self.dut.manual_read.value = op.manual_read
             self.dut.manual_switches.value = op.manual_switches
             self.dut.bus.value = op.bus
 

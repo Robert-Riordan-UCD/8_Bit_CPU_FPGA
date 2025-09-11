@@ -113,7 +113,6 @@ module fpga_interface (
         .rst(rst),
         .read_from_bus(mar_read_from_bus),
         .manual_mode(ram_mode),
-        .manual_read(ram_pulse),
         .manual_switches(mar_switches),
         .bus(bus_data[3:0]),
         .address(memory_address)

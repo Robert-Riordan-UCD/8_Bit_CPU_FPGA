@@ -31,7 +31,7 @@ class Coverage(uvm_subscriber):
         if op.read_from_bus.value == 1 and op.manual_mode == 0:
             point_bus_in(op)
         
-        if op.manual_read == 1 and op.manual_mode == 1:
+        if op.manual_mode == 1:
             point_switches(op)
 
         point_addr(op)

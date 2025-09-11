@@ -23,7 +23,6 @@ class Monitor(uvm_monitor):
             op.rst = self.dut.rst
             op.read_from_bus = self.dut.read_from_bus
             op.manual_mode = self.dut.manual_mode
-            op.manual_read = self.dut.manual_read
             op.manual_switches = self.dut.manual_switches
             op.bus = self.dut.bus
             op.address = self.dut.address

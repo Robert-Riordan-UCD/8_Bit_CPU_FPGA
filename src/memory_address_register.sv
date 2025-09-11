@@ -5,7 +5,6 @@ module memory_address_register (
     input read_from_bus,
 
     input manual_mode,
-    input manual_read,
     input [3:0] manual_switches,
 
     input [3:0] bus,
@@ -20,7 +19,7 @@ module memory_address_register (
         end else if (!manual_mode && read_from_bus) begin
             cont_addr <= bus;
         end else begin
-            cont_addr <= address;
+            cont_addr <= cont_addr;
         end
     end
 

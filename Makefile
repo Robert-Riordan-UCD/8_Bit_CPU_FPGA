@@ -25,8 +25,12 @@ upload-flash:
 	openFPGALoader -b tangnano9k -f ./build/bitstream.fs
 
 push-to-pi:
-	scp ./build/bitstream.fs ${PI_USERNAME}@${PI_IP_ADDRESS}:${PI_DIR}/bitstream.fs
-	(echo cd ${PI_DIR}; echo make) | ssh ${PI_USERNAME}@${PI_IP_ADDRESS}
+	scp ./build/bitstream.fs ${PI_USERNAME}@${PI_IP_ADDRESS}:bitstream.fs
+	(echo openFPGALoader -b tangnano9k bitstream.fs) | ssh ${PI_USERNAME}@${PI_IP_ADDRESS}
+
+flash-to-pi:
+	scp ./build/bitstream.fs ${PI_USERNAME}@${PI_IP_ADDRESS}:bitstream.fs
+	(echo openFPGALoader -b tangnano9k -f bitstream.fs) | ssh ${PI_USERNAME}@${PI_IP_ADDRESS}
 
 clean:
 	rm -rf build/

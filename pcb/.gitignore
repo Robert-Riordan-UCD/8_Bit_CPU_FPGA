@@ -1,0 +1,7 @@
+8-bit-cpu-backups/
+~*
+build/
+build.zip
+fp-info-cache
+8-bit-cpu.kicad_prl
+*.bak

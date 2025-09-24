@@ -85,7 +85,7 @@ module control (
         Counts 0 to 6 before reseting to 0
         Used to to determine which step in an instruciton is currently needed
     */
-    localparam STEP_MAX = 6;
+    localparam STEP_MAX = 5;
     logic [2:0] step_counter;
 
     always_ff @(negedge clk or posedge rst) begin

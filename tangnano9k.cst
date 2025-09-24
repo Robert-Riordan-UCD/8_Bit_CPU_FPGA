@@ -1,97 +1,67 @@
-IO_LOC  "bootloader_switches[3]" 42;
-IO_PORT "bootloader_switches[3]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+#IO_LOC  "bootloader_switches[0]" 42;
+#IO_PORT "bootloader_switches[0]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "bootloader_switches[2]" 51;
-IO_PORT "bootloader_switches[2]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+IO_LOC  "bootloader_switches[0]" 51;
+IO_PORT "bootloader_switches[0]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
 IO_LOC  "bootloader_switches[1]" 53;
 IO_PORT "bootloader_switches[1]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "bootloader_switches[0]" 54;
-IO_PORT "bootloader_switches[0]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+IO_LOC  "bootloader_switches[2]" 54;
+IO_PORT "bootloader_switches[2]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
 IO_LOC  "enable_bootloader" 55;
 IO_PORT "enable_bootloader" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "ram_switches[7]" 77;
-IO_PORT "ram_switches[7]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
-
-IO_LOC  "ram_switches[6]" 76;
-IO_PORT "ram_switches[6]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
-
-IO_LOC  "ram_switches[5]" 75;
-IO_PORT "ram_switches[5]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
-
-IO_LOC  "ram_switches[4]" 74;
-IO_PORT "ram_switches[4]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
-
-IO_LOC  "ram_switches[3]" 73;
-IO_PORT "ram_switches[3]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
-
-IO_LOC  "ram_switches[2]" 72;
-IO_PORT "ram_switches[2]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
-
-IO_LOC  "ram_switches[1]" 71;
-IO_PORT "ram_switches[1]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
-
-IO_LOC  "ram_switches[0]" 70;
+IO_LOC  "ram_switches[0]" 77;
 IO_PORT "ram_switches[0]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "debug[9]" 35;
-IO_PORT "debug[9]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "ram_switches[1]" 76;
+IO_PORT "ram_switches[1]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "debug[8]" 41;
-IO_PORT "debug[8]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "ram_switches[2]" 75;
+IO_PORT "ram_switches[2]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "debug[7]" 63;
-IO_PORT "debug[7]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "ram_switches[3]" 74;
+IO_PORT "ram_switches[3]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "debug[6]" 86;
-IO_PORT "debug[6]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "ram_switches[4]" 73;
+IO_PORT "ram_switches[4]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "debug[5]" 85;
-IO_PORT "debug[5]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "ram_switches[5]" 72;
+IO_PORT "ram_switches[5]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "debug[4]" 84;
-IO_PORT "debug[4]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "ram_switches[6]" 71;
+IO_PORT "ram_switches[6]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "debug[3]" 83;
-IO_PORT "debug[3]" DRIVE=8 IO_TYPE=LVCMOS18;
-
-IO_LOC  "debug[2]" 82;
-IO_PORT "debug[2]" DRIVE=8 IO_TYPE=LVCMOS18;
-
-IO_LOC  "debug[1]" 81;
-IO_PORT "debug[1]" DRIVE=8 IO_TYPE=LVCMOS18;
-
-IO_LOC  "debug[0]" 80;
-IO_PORT "debug[0]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_LOC  "ram_switches[7]" 70;
+IO_PORT "ram_switches[7]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
 IO_LOC  "digit[3]" 26;
-IO_PORT "digit[3]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+IO_PORT "digit[3]" DRIVE=24 IO_TYPE=LVCMOS18;
 
 IO_LOC  "digit[2]" 36;
-IO_PORT "digit[2]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+IO_PORT "digit[2]" DRIVE=16 IO_TYPE=LVCMOS18;
 
 IO_LOC  "digit[1]" 37;
-IO_PORT "digit[1]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+IO_PORT "digit[1]" DRIVE=4 IO_TYPE=LVCMOS18;
 
 IO_LOC  "digit[0]" 27;
-IO_PORT "digit[0]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+IO_PORT "digit[0]" DRIVE=24 IO_TYPE=LVCMOS18;
 
-IO_LOC  "mar_switches[3]" 48;
-IO_PORT "mar_switches[3]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
-
-IO_LOC  "mar_switches[2]" 49;
-IO_PORT "mar_switches[2]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
-
-IO_LOC  "mar_switches[1]" 31;
-IO_PORT "mar_switches[1]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
-
-IO_LOC  "mar_switches[0]" 32;
+IO_LOC  "mar_switches[0]" 48;
 IO_PORT "mar_switches[0]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
-IO_LOC  "ram_pulse" 68;
+IO_LOC  "mar_switches[1]" 49;
+IO_PORT "mar_switches[1]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
+IO_LOC  "mar_switches[2]" 31;
+IO_PORT "mar_switches[2]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
+IO_LOC  "mar_switches[3]" 32;
+IO_PORT "mar_switches[3]" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
+
+IO_LOC  "ram_pulse" 4;
 IO_PORT "ram_pulse" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;
 
 IO_LOC  "ram_mode" 56;
@@ -101,28 +71,28 @@ IO_LOC  "rst_n" 3;
 IO_PORT "rst_n" IO_TYPE=LVCMOS18 PULL_MODE=UP;
 
 IO_LOC  "segments[7]" 30;
-IO_PORT "segments[7]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_PORT "segments[7]" DRIVE=16 IO_TYPE=LVCMOS18;
 
 IO_LOC  "segments[6]" 28;
-IO_PORT "segments[6]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_PORT "segments[6]" DRIVE=16 IO_TYPE=LVCMOS18;
 
 IO_LOC  "segments[5]" 39;
-IO_PORT "segments[5]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_PORT "segments[5]" DRIVE=16 IO_TYPE=LVCMOS18;
 
 IO_LOC  "segments[4]" 34;
-IO_PORT "segments[4]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_PORT "segments[4]" DRIVE=16 IO_TYPE=LVCMOS18;
 
 IO_LOC  "segments[3]" 33;
-IO_PORT "segments[3]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_PORT "segments[3]" DRIVE=16 IO_TYPE=LVCMOS18;
 
 IO_LOC  "segments[2]" 29;
-IO_PORT "segments[2]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_PORT "segments[2]" DRIVE=16 IO_TYPE=LVCMOS18;
 
 IO_LOC  "segments[1]" 38;
-IO_PORT "segments[1]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_PORT "segments[1]" DRIVE=16 IO_TYPE=LVCMOS18;
 
 IO_LOC  "segments[0]" 25;
-IO_PORT "segments[0]" DRIVE=8 IO_TYPE=LVCMOS18;
+IO_PORT "segments[0]" DRIVE=16 IO_TYPE=LVCMOS18;
 
 IO_LOC  "clk_mode" 57;
 IO_PORT "clk_mode" IO_TYPE=LVCMOS18 PULL_MODE=DOWN;

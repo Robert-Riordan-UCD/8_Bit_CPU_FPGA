@@ -123,12 +123,14 @@ module fpga_interface (
         .clk(cpu_clk),
         .read_from_bus(ram_read_from_bus),
         .manual_mode(ram_mode),
-        .manual_read(ram_pulse),
+        .manual_read(ram_pulse_n),
         .address(memory_address),
         .program_switches(ram_switches),
         .bus_in(bus_data),
         .bus_out(ram_bus_out)
     );
+    logic ran_pulse_n;
+    assign ram_pulse_n = ~ram_pulse;
 
     /* A register */
     register u_a_reg (
@@ -212,9 +214,15 @@ module fpga_interface (
         .rst(rst),
         .enable(out_en),
         .bus(bus_data),
-        .segments(segments),
-        .digit(digit)
+        .segments(segments_n),
+        .digit(digit_n)
     );
+
+    logic [7:0] segments_n;
+    logic [3:0] digit_n;
+    assign segments = ~segments_n;
+    assign digit = ~digit_n;
+
 
     /* Bootloader */
     bootloader u_bootloader(
@@ -267,7 +275,8 @@ module fpga_interface (
     /* Debug LEDs */
     // assign led = ~{clk_halt, cpu_clk, pc_out, pc_inc, ram_read_from_bus, a_reg_write_to_bus};
     // assign led = ~{a_reg_write_to_bus, a_reg_read_from_bus, pc_out, pc_jump, pc_inc, clk_halt};
-    assign led = ~{cpu_clk, boot_write_to_bus, mar_read_from_bus, bootload_address, ram_read_from_bus, bootload_ram};
+    // assign led = ~{cpu_clk, boot_write_to_bus, mar_read_from_bus, bootload_address, ram_read_from_bus, bootload_ram};
+    assign led = ~{ram_switches};
     assign debug = {
         // clk_mode,
         // clk_pulse,

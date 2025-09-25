@@ -8,7 +8,7 @@ module bus #(
     output [WIDTH-1:0] bus_data
 );
 
-    // Convert lane_seect from one-hot to binary
+    // Convert lane_select from one-hot to binary
     logic [$clog2(LANES)-1:0] lane_select_binary;
 
     always_comb begin

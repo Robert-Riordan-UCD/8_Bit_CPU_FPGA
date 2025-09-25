@@ -38,10 +38,9 @@ module bootloader (
 
         /* Count in 1s */
         // Program
-        programs[0][0] = {`LOAD_IM, 4'b0000};
-        programs[0][1] = {`ADD,     4'b1111};
-        programs[0][2] = {`OUT,     4'b0000};
-        programs[0][3] = {`JUMP,    4'b0001};
+        programs[0][0] = {`ADD,     4'b1111};
+        programs[0][1] = {`OUT,     4'b0000};
+        programs[0][2] = {`JUMP,    4'b0000};
         // Data
         programs[0][15] =    {8'b00000001};
 
@@ -56,17 +55,16 @@ module bootloader (
 
         /* Fibonacci */
         // Program
-        programs[2][0] = {`LOAD_IM, 4'b0000};
-        programs[2][1] = {`ADD,     4'b1111};
-        programs[2][2] = {`JUMPC,   4'b1010};
-        programs[2][3] = {`OUT,     4'b0000};
-        programs[2][4] = {`STORE_A, 4'b1101};
-        programs[2][5] = {`LOAD_A,  4'b1110};
-        programs[2][6] = {`STORE_A, 4'b1111};
-        programs[2][7] = {`LOAD_A,  4'b1101};
-        programs[2][8] = {`STORE_A, 4'b1110};
-        programs[2][9] = {`JUMP,    4'b0001};
-        programs[2][10]= {`HALT,    4'b0000};
+        programs[2][0] = {`ADD,     4'b1111};
+        programs[2][1] = {`JUMPC,   4'b1001};
+        programs[2][2] = {`OUT,     4'b0000};
+        programs[2][3] = {`STORE_A, 4'b1101};
+        programs[2][4] = {`LOAD_A,  4'b1110};
+        programs[2][5] = {`STORE_A, 4'b1111};
+        programs[2][6] = {`LOAD_A,  4'b1101};
+        programs[2][7] = {`STORE_A, 4'b1110};
+        programs[2][8] = {`JUMP,    4'b0000};
+        programs[2][9] = {`HALT,    4'b0000};
         // Data
         programs[2][14] = {8'b00000001};
         programs[2][15] = {8'b00000000};
